@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+D:/SchoolWorks/Compiler/Lexer.cpp
+Lexer.h
+D:/SchoolWorks/Compiler/Lexer.h
+SymbolType.h
+D:/SchoolWorks/Compiler/SymbolType.h
+iostream
+D:/SchoolWorks/Compiler/iostream
+fstream
+-
+
+D:/SchoolWorks/Compiler/Lexer.h
+string
+D:/SchoolWorks/Compiler/string
+SymbolType.h
+D:/SchoolWorks/Compiler/SymbolType.h
+list
+D:/SchoolWorks/Compiler/list
+
+D:/SchoolWorks/Compiler/SymbolType.h
+map
+D:/SchoolWorks/Compiler/map
+list
+D:/SchoolWorks/Compiler/list
+
