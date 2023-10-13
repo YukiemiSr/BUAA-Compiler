@@ -1,8 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "Lexer.h"
+#include "include/Parser.h"
 using namespace std;
+void out(Tree* tree,std::ofstream &output);
 int main() {
     ifstream input("testfile.txt");
     if(!input.is_open()) {
@@ -15,8 +16,24 @@ int main() {
         cout << "error_output" << endl;
         return 1;
     }
-    Lexer lexer(input,output);
-    lexer.work();
+    Parser parser(input, output);
+    parser.parse();
+    out(parser.finalTree,output);
     input.close();
     output.close();
+}
+void out(Tree* tree,std::ofstream &output) {
+    if (tree->token == nullptr) {
+        for (auto node: tree->children) {
+            out(node,output);
+        }
+    }
+    if (tree->needOut()) {
+        if(tree->token != nullptr) {
+            string s = symbolOutput.find(tree->token->nodeType)->second;
+            output << s << " " << tree->token->nodeStr << endl;
+        } else {
+            output << "<" << garmmerOutput.find(tree->treeType)->second << ">" << endl;
+        }
+    }
 }

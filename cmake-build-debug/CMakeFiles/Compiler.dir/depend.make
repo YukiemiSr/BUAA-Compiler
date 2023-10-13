@@ -3,9 +3,26 @@
 
 CMakeFiles/Compiler.dir/Lexer.cpp.obj: ../Lexer.cpp
 CMakeFiles/Compiler.dir/Lexer.cpp.obj: ../Lexer.h
-CMakeFiles/Compiler.dir/Lexer.cpp.obj: ../SymbolType.h
+CMakeFiles/Compiler.dir/Lexer.cpp.obj: ../include/LexerSummary.h
+CMakeFiles/Compiler.dir/Lexer.cpp.obj: ../include/Tree.h
+CMakeFiles/Compiler.dir/Lexer.cpp.obj: ../include/parserDefine.h
+
+CMakeFiles/Compiler.dir/Parser.cpp.obj: ../Lexer.h
+CMakeFiles/Compiler.dir/Parser.cpp.obj: ../Parser.cpp
+CMakeFiles/Compiler.dir/Parser.cpp.obj: ../include/LexerSummary.h
+CMakeFiles/Compiler.dir/Parser.cpp.obj: ../include/Parser.h
+CMakeFiles/Compiler.dir/Parser.cpp.obj: ../include/Tree.h
+CMakeFiles/Compiler.dir/Parser.cpp.obj: ../include/parserDefine.h
+
+CMakeFiles/Compiler.dir/Tree.cpp.obj: ../Tree.cpp
+CMakeFiles/Compiler.dir/Tree.cpp.obj: ../include/LexerSummary.h
+CMakeFiles/Compiler.dir/Tree.cpp.obj: ../include/Tree.h
+CMakeFiles/Compiler.dir/Tree.cpp.obj: ../include/parserDefine.h
 
 CMakeFiles/Compiler.dir/main.cpp.obj: ../Lexer.h
-CMakeFiles/Compiler.dir/main.cpp.obj: ../SymbolType.h
+CMakeFiles/Compiler.dir/main.cpp.obj: ../include/LexerSummary.h
+CMakeFiles/Compiler.dir/main.cpp.obj: ../include/Parser.h
+CMakeFiles/Compiler.dir/main.cpp.obj: ../include/Tree.h
+CMakeFiles/Compiler.dir/main.cpp.obj: ../include/parserDefine.h
 CMakeFiles/Compiler.dir/main.cpp.obj: ../main.cpp
 

@@ -1,0 +1,87 @@
+//
+// Created by Yuki_Z on 2023-10-06.
+//
+
+#ifndef COMPILER_GRAMMERTYPE_H
+#define COMPILER_GRAMMERTYPE_H
+#include "map"
+#include "string"
+using namespace std;
+enum GrammerType {
+    LVal,
+    FormatString,
+    Exp,
+    Stmt,
+    CompUnit,
+    Decl,
+    FuncDef,
+    MainFuncDef,
+    ConstDecl,
+    VarDecl,
+    BType,
+    Ident,
+    ConstExp,
+    ConstInitVal,
+    InitVal,
+    FuncType,
+    FuncFParams,
+    Block,
+    FuncFParam,
+    BlockItem,
+    Cond,
+    ForStmt,
+    AddExp,
+    LOrExp,
+    PrimaryExp,
+    Number,
+    IntConst,
+    UnaryExp,
+    UnaryOp,
+    FuncRParams,
+    MulExp,
+    RelExp,
+    EqExp,
+    LAndExp,
+    ConstDef,
+    VarDef,
+    leaf
+};
+const map<GrammerType, string> garmmerOutput {
+        {LVal,"LVal"},
+        {FormatString,"FormatString"},
+        {Exp,"Exp"},
+        {Stmt,"Stmt"},
+        {CompUnit,"CompUnit"},
+        {Decl,"Decl"},
+        {FuncDef,"FuncDef"},
+        {MainFuncDef,"MainFuncDef"},
+        {ConstDecl,"ConstDecl"},
+        {VarDecl,"VarDecl"},
+        {BType,"BType"},
+        {Ident,"Ident"},
+        {ConstExp,"ConstExp"},
+        {ConstInitVal,"ConstInitVal"},
+        {InitVal,"InitVal"},
+        {FuncType,"FuncType"},
+        {FuncFParams,"FuncFParams"},
+        {Block,"Block"},
+        {FuncFParam,"FuncFParam"},
+        {BlockItem,"BolckItem"},
+        {Cond,"Cond"},
+        {ForStmt,"ForStmt"},
+        {AddExp,"AddExp"},
+        {LOrExp,"LOrExp"},
+        {PrimaryExp,"PrimaryExp"},
+        {Number,"Number"},
+        {IntConst,"IntConst"},
+        {UnaryExp,"UnaryExp"},
+        {UnaryOp,"UnaryOp"},
+        {FuncRParams,"FuncRParams"},
+        {MulExp,"MulExp"},
+        {RelExp,"RelExp"},
+        {EqExp,"EqExp"},
+        {LAndExp,"LAndExp"},
+        {ConstDef,"ConstDef"},
+        {VarDef,"VarDef"}
+};
+#endif //COMPILER_GRAMMERTYPE_H

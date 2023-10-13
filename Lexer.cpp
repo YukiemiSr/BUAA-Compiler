@@ -1,128 +1,134 @@
 #include "Lexer.h"
-#include "SymbolType.h"
 #include "iostream"
 #include  <fstream>
-#include "list"
-#include "vector"
-#define isSpace(x) (x == ' ')||(x == '\r')||(x == '\t')
-using namespace std;
+#include "include/Tree.h"
+
+#define isSpace(x) (x == ' ')||(x == '\r')||(x == '\t') || (x == '\n')
+
 Lexer::Lexer(std::ifstream &input, std::ofstream &output) : input(input), output(output) {
-    while(getline(input,curLine)) {
+    while (getline(input, curLine)) {
         sourceLines.push_back(curLine);
     }
+    pre_work();
 }
+
+bool Lexer::isOver() {
+    return pos >= curLine.length();
+}
+
 void Lexer::printOut() {
-    if(output.is_open()) {
+    if (output.is_open()) {
         string s = symbolOutput.find(this->curType)->second;
         output << s << " " << this->curToken << endl;
-        cout << s << " " << this->curToken << endl;
     }
 }
-void Lexer::work() {
-    for(auto & sourceLine : sourceLines) {
+
+void Lexer::pre_work() {
+    string l;
+    for (auto &sourceLine : sourceLines) {
         this->curLine = sourceLine;
-        this->lineNumber++;
-        parseLine();
+        examine();
+        l += this->curLine;
+        l += '\n';
     }
-}
-void Lexer::parseLine() {
+    this->curLine = l;
     this->pos = 0;
-    examine();//进行针对句子的注释处理
-    while(pos < curLine.length()) {
-        this->next();
-    }
 }
-void Lexer::next() {
+
+Token *Lexer::next() {
     this->curToken.clear();
-    while(isSpace(curLine[pos]) && pos < this->curLine.length()) {
+    while (isSpace(curLine[pos]) && pos < this->curLine.length()) {
+        if (curLine[pos] == '\n') this->lineNumber++;//record lineNumber
         pos++;
     }
     string c_str;
     c_str = curLine[pos];
-    if(isdigit(curLine[pos])) getNumber();
-    else if(isalpha(curLine[pos]) || curLine[pos] == '_') getText();
-    else if(curLine[pos] == '"') getString();
-    else if(str_symbolMap.count(c_str) > 0) getSymbol();
+    if (isdigit(curLine[pos])) getNumber();
+    else if (isalpha(curLine[pos]) || curLine[pos] == '_') getText();
+    else if (curLine[pos] == '"') getString();
+    else if (str_symbolMap.count(c_str) > 0) getSymbol();
+    auto *token = new Token(this->curType, this->curToken, this->lineNumber);
+    return token;
 }
+
 void Lexer::getNumber() {
     string l;
-    while(isdigit(curLine[pos]) && pos < curLine.length()) {
-        l  += curLine[pos++];
+    while (isdigit(curLine[pos]) && pos < curLine.length()) {
+        l += curLine[pos++];
     }
     this->curToken = l;
     this->curType = INTCON;
-    printOut();
+    //printOut();
 }
+
 void Lexer::getText() {
     string l;
-    while(isalpha(curLine[pos]) || curLine[pos] == '_' || isdigit(curLine[pos])) {
+    while (isalpha(curLine[pos]) || curLine[pos] == '_' || isdigit(curLine[pos])) {
         l += curLine[pos++];
     }
-    if(ReservedWordMap.count(l) > 0) { //exist ReserveWord
-         this->curToken = l;
-         this->curType = ReservedWordMap.at(l);
-    }
-    else { // not exist
+    if (ReservedWordMap.count(l) > 0) { //exist ReserveWord
+        this->curToken = l;
+        this->curType = ReservedWordMap.at(l);
+    } else { // not exist
         this->curToken = l;
         this->curType = IDENFR;
     }
-    printOut();
+    //printOut();
 }
+
 void Lexer::getString() {
     string l;
     l += '"';
     pos++;
-    while(curLine[pos] != '"' && pos < curLine.length()) {
+    while (curLine[pos] != '"' && pos < curLine.length()) {
         l += curLine[pos++];
     }
     pos++;
     l += '"';
     this->curToken = l;
     this->curType = STRCON;
-    printOut();
+    //printOut();
 }
+
 void Lexer::getSymbol() {
-    string l = "";
+    string l;
     l += curLine[pos++];
-    if(pos < curLine.length()) {
-        string l1 =l + curLine[pos];
-        if(str_symbolMap.count(l1) > 0) {
+    if (pos < curLine.length()) {
+        string l1 = l + curLine[pos];
+        if (str_symbolMap.count(l1) > 0) {
             this->curToken = l1;
             this->curType = str_symbolMap.at(l1);
             pos++;
-        }
-        else {
+        } else {
             this->curToken = l;
             this->curType = str_symbolMap.at(l);
         }
-    }
-    else {
+    } else {
         this->curToken = l;
         this->curType = str_symbolMap.at(l);
     }
-    printOut();
+    //printOut();
 }
+
 void Lexer::examine() {//进行注释的预处理
     bool strIn = false;
     string l;
     l = "";
-    for(int i = 0; i < curLine.length(); i++) {
-        if(!this->annotationState) {
-            if(curLine[i] == '"') {
+    for (int i = 0; i < curLine.length(); i++) {
+        if (!this->annotationState) {
+            if (curLine[i] == '"') {
                 strIn = !strIn;
             }
-            if(!strIn) {
-                if(curLine[i] == '/' && curLine[i+1] == '/') {
+            if (!strIn) {
+                if (curLine[i] == '/' && curLine[i + 1] == '/') {
                     break;
-                }
-                else if(curLine[i] == '/' && curLine[i+1] == '*') {
+                } else if (curLine[i] == '/' && curLine[i + 1] == '*') {
                     i++;
                     this->annotationState = true;
                 }
             }
-            if(!this->annotationState)  l += curLine[i];
-        }
-        else {
+            if (!this->annotationState) l += curLine[i];
+        } else {
             if (curLine[i] == '*' && curLine[i + 1] == '/') {
                 i++;
                 this->annotationState = false;

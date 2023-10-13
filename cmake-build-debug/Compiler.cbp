@@ -86,7 +86,22 @@
 		<Unit filename="D:/SchoolWorks/Compiler/Lexer.h">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/SchoolWorks/Compiler/SymbolType.h">
+		<Unit filename="D:/SchoolWorks/Compiler/Parser.cpp">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="D:/SchoolWorks/Compiler/Tree.cpp">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="D:/SchoolWorks/Compiler/include/LexerSummary.h">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="D:/SchoolWorks/Compiler/include/Parser.h">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="D:/SchoolWorks/Compiler/include/Tree.h">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="D:/SchoolWorks/Compiler/include/parserDefine.h">
 			<Option target="Compiler"/>
 		</Unit>
 		<Unit filename="D:/SchoolWorks/Compiler/main.cpp">

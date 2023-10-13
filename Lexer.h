@@ -4,34 +4,45 @@
 
 #ifndef COMPILER_LEXER_H
 #define COMPILER_LEXER_H
+
 #include "string"
-#include "SymbolType.h"
+#include "include/LexerSummary.h"
 #include "list"
-using namespace std;
+#include "include/Tree.h"
 
 class Lexer {
 private:
     list<string> sourceLines;
-    string curToken;
     ofstream &output;
     ifstream &input;
     string curLine;
-    int lineNumber;
-    int pos;
+    int pos = 0;
     bool annotationState = false;
-    SymbolType curType;
+public:
+    LexerType curType = ELSE;
+    string curToken;
+    int lineNumber = 0;
 private:
     void getNumber();
+
     void getText();
-    void parseLine();
+
     void getString();
+
     void getSymbol();
+
     void printOut();
+
     void examine();
+
+    void pre_work();
+
 public:
     Lexer(std::ifstream &input, std::ofstream &output);
-    void work();
-    void next();
+
+    bool isOver();
+
+    Token *next();
 };
 
 
