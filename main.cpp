@@ -5,13 +5,13 @@
 using namespace std;
 void out(Tree* tree,std::ofstream &output);
 int main() {
-    ifstream input("testfile.txt");
+    ifstream input("../test/testfile.txt");
     if(!input.is_open()) {
         cout << "error_input" <<endl;
         return 1;
     }
     //文件读取检查
-    ofstream output("output.txt");
+    ofstream output("../test/output.txt");
     if(!output.is_open()) {
         cout << "error_output" << endl;
         return 1;

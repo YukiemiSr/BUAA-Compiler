@@ -6,9 +6,9 @@
 #define COMPILER_LEXER_H
 
 #include "string"
-#include "include/LexerSummary.h"
+#include "LexerSummary.h"
 #include "list"
-#include "include/Tree.h"
+#include "Tree.h"
 
 class Lexer {
 private:

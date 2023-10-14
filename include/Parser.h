@@ -5,7 +5,7 @@
 #ifndef COMPILER_PARSER_H
 #define COMPILER_PARSER_H
 
-#include "../Lexer.h"
+#include "Lexer.h"
 #include "vector"
 #include "Tree.h"
 

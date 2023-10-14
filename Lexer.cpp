@@ -1,4 +1,4 @@
-#include "Lexer.h"
+#include "include/Lexer.h"
 #include "iostream"
 #include  <fstream>
 #include "include/Tree.h"
