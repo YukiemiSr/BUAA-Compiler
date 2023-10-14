@@ -83,13 +83,13 @@
 		<Unit filename="D:/SchoolWorks/Compiler/Lexer.cpp">
 			<Option target="Compiler"/>
 		</Unit>
-		<Unit filename="D:/SchoolWorks/Compiler/Lexer.h">
-			<Option target="Compiler"/>
-		</Unit>
 		<Unit filename="D:/SchoolWorks/Compiler/Parser.cpp">
 			<Option target="Compiler"/>
 		</Unit>
 		<Unit filename="D:/SchoolWorks/Compiler/Tree.cpp">
+			<Option target="Compiler"/>
+		</Unit>
+		<Unit filename="D:/SchoolWorks/Compiler/include/Lexer.h">
 			<Option target="Compiler"/>
 		</Unit>
 		<Unit filename="D:/SchoolWorks/Compiler/include/LexerSummary.h">

@@ -114,7 +114,7 @@
 		},
 		{
 			"backtrace" : 1,
-			"path" : "Lexer.h",
+			"path" : "include/Lexer.h",
 			"sourceGroupIndex" : 1
 		},
 		{
