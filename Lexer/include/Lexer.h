@@ -8,7 +8,7 @@
 #include "string"
 #include "LexerSummary.h"
 #include "list"
-#include "Tree.h"
+#include "../../Parser/include/Tree.h"
 
 class Lexer {
 private:
@@ -21,7 +21,7 @@ private:
 public:
     LexerType curType = ELSE;
     string curToken;
-    int lineNumber = 0;
+    int lineNumber;
 private:
     void getNumber();
 
@@ -31,7 +31,7 @@ private:
 
     void getSymbol();
 
-    void printOut();
+    //void printOut();
 
     void examine();
 

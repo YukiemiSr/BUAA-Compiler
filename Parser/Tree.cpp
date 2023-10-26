@@ -13,7 +13,6 @@ Token::Token(LexerType type, std::string &str, int num) {
     this->nodeStr = str;
 }
 
-
 Tree::Tree(Tree *dad, GrammerType type, Token *token1) {
     this->father = dad;
     this->token = token1;

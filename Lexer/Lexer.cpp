@@ -1,11 +1,12 @@
 #include "include/Lexer.h"
 #include "iostream"
 #include  <fstream>
-#include "include/Tree.h"
+#include "../Parser/include/Tree.h"
 
 #define isSpace(x) (x == ' ')||(x == '\r')||(x == '\t') || (x == '\n')
 
 Lexer::Lexer(std::ifstream &input, std::ofstream &output) : input(input), output(output) {
+    this->lineNumber = 0;
     while (getline(input, curLine)) {
         sourceLines.push_back(curLine);
     }
@@ -16,12 +17,12 @@ bool Lexer::isOver() {
     return pos >= curLine.length();
 }
 
-void Lexer::printOut() {
+/*void Lexer::printOut() {
     if (output.is_open()) {
         string s = symbolOutput.find(this->curType)->second;
-        output << s << " " << this->curToken << endl;
+        output << s << " " << this->curToken << this->lineNumber << endl;
     }
-}
+}*/
 
 void Lexer::pre_work() {
     string l;
@@ -38,7 +39,7 @@ void Lexer::pre_work() {
 Token *Lexer::next() {
     this->curToken.clear();
     while (isSpace(curLine[pos]) && pos < this->curLine.length()) {
-        if (curLine[pos] == '\n') this->lineNumber++;//record lineNumber
+        if (curLine[pos] == '\n') this->lineNumber++;
         pos++;
     }
     string c_str;
@@ -73,7 +74,7 @@ void Lexer::getText() {
         this->curToken = l;
         this->curType = IDENFR;
     }
-    //printOut();
+   // printOut();
 }
 
 void Lexer::getString() {
@@ -137,11 +138,3 @@ void Lexer::examine() {//进行注释的预处理
     }
     this->curLine = l;
 }
-
-
-
-
-
-
-
-

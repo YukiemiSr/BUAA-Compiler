@@ -7,7 +7,6 @@
 
 #include "map"
 #include "list"
-
 using namespace std;
 enum LexerType {
     IDENFR, //ident
@@ -50,19 +49,6 @@ enum LexerType {
     RBRACE,//}
     ELSE//
 };
-enum class ReservedWord {  // 保留字
-    MAINTK, // main
-    CONSTTK, // const
-    INTTK, // int
-    BREAKTK, // break
-    CONTINUETK, // continue
-    IFTK, // if
-    ELSETK, // else
-    GETINTTK, // getint
-    PRINTFTK, // printf
-    RETURNTK, // return
-    VOIDTK // void
-};
 const map<string, LexerType> ReservedWordMap{
         {"main",     MAINTK},
         {"const",    CONSTTK},
@@ -77,6 +63,7 @@ const map<string, LexerType> ReservedWordMap{
         {"void",     VOIDTK},
         {"for",      FORTK}
 };
+
 const map<string, LexerType> str_symbolMap{
         {"+",  PLUS},
         {"-",  MINU},

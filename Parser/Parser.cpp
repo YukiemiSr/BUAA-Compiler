@@ -24,15 +24,10 @@ void Parser::next() {
 }
 
 Tree* Parser::initLeaf(Tree* dad = nullptr,GrammerType type = leaf) {
-    Tree *tree = new Tree(dad,type,initToken());
+    auto *token = new Token(curType, curToken, tokenList[curTokenNumber]->lineNumber);
+    Tree *tree = new Tree(dad,type,token);
     next();
     return tree;
-}
-
-
-Token *Parser::initToken() {
-    auto *token = new Token(curType, curToken, curTokenNumber);
-    return token;
 }
 
 void Parser::parse() {
@@ -353,7 +348,7 @@ Tree *Parser::parse_InitVal(Tree *dad) {
 
 Tree *Parser::parse_Stmt(Tree *dad) {
     Tree *tree = new Tree(dad,Stmt);
-    if(curType == IFTK) {
+    if(curType == IFTK) {//if
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(parse_Cond(tree));
@@ -364,7 +359,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
             tree->addChild(parse_Stmt(tree));
         }
     }
-    else if(curType == FORTK) {
+    else if(curType == FORTK) {//for
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(initLeaf(tree,leaf));
         if(curType != SEMICN) {
@@ -381,18 +376,18 @@ Tree *Parser::parse_Stmt(Tree *dad) {
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(parse_Stmt(tree));
     }
-    else if(curType == BREAKTK || curType == CONTINUETK) {
+    else if(curType == BREAKTK || curType == CONTINUETK) {//break||continue
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(initLeaf(tree,leaf));
     }
-    else if(curType == RETURNTK) {
+    else if(curType == RETURNTK) {//return
         tree->addChild(initLeaf(tree,leaf));
         if(curType != SEMICN) {
             tree->addChild(parse_Exp(tree));
         }
         tree->addChild(initLeaf(tree,leaf));
     }
-    else if(curType == PRINTFTK) {
+    else if(curType == PRINTFTK) {//printf
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(parse_FormatString(tree));
@@ -403,7 +398,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(initLeaf(tree,leaf));
     }
-    else if(curType == LBRACE) {
+    else if(curType == LBRACE) {//block
         tree->addChild(parse_Block(tree));
     }
     else if(curType == SEMICN) {
@@ -416,7 +411,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
         tree->addChild(initLeaf(tree,leaf));
     }
     else {
-        if(tokenList[curTokenNumber+1]->nodeType == ASSIGN) {
+        if(tokenList[curTokenNumber+1]->nodeType == ASSIGN) {//下一个为=，则一定是Lval
             tree->addChild(parse_LVal(tree));
             tree->addChild(initLeaf(tree,leaf));
             if(curType == GETINTTK) {
@@ -430,12 +425,13 @@ Tree *Parser::parse_Stmt(Tree *dad) {
                 tree->addChild(initLeaf(tree,leaf));
             }
         }
-        else {
+        else {//第二个不是等号
             int tmp = curTokenNumber;
-            while(tokenList[tmp]->nodeType != ASSIGN && tokenList[tmp]->nodeType != SEMICN) {
+            while(tokenList[tmp]->nodeType != ASSIGN && tokenList[tmp]->nodeType != SEMICN) {//=和;谁先出现
                 tmp++;
             }
             if(tokenList[tmp]->nodeType == ASSIGN) {
+                //Lval =
                 tree->addChild(parse_LVal(tree));
                 tree->addChild(initLeaf(tree,leaf));
                 if(curType == GETINTTK) {
@@ -449,7 +445,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
                     tree->addChild(initLeaf(tree,leaf));
                 }
             }
-            else {
+            else {//Exp
                 tree->addChild(parse_Exp(tree));
                 tree->addChild(initLeaf(tree,leaf));
             }

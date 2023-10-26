@@ -5,7 +5,7 @@
 #ifndef COMPILER_PARSER_H
 #define COMPILER_PARSER_H
 
-#include "Lexer.h"
+#include "../../Lexer/include/Lexer.h"
 #include "vector"
 #include "Tree.h"
 
@@ -19,7 +19,6 @@ private:
 public:
     Tree *finalTree;
 private:
-    Token *initToken();
     Tree *initLeaf(Tree* dad,GrammerType type);
     Tree *parse_CompUnit();
     Tree *parse_Exp(Tree *dad);
@@ -62,9 +61,6 @@ public:
 
     void next();
 
-    bool isOver();
-
-    bool hasNext();
 };
 
 #endif //COMPILER_PARSER_H

@@ -7,7 +7,7 @@
 
 #include "vector"
 #include "parserDefine.h"
-#include "LexerSummary.h"
+#include "../../Lexer/include/LexerSummary.h"
 #include "string"
 #include "map"
 struct Token {
@@ -36,6 +36,5 @@ public:
     void setDad(Tree *dad);
     bool needOut();
 };
-
 
 #endif //COMPILER_TREE_H
