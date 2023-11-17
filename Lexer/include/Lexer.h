@@ -9,7 +9,7 @@
 #include "LexerSummary.h"
 #include "list"
 #include "../../Parser/include/Tree.h"
-
+#include "../../Error/errorDeal.h"
 class Lexer {
 private:
     list<string> sourceLines;
@@ -22,16 +22,15 @@ public:
     LexerType curType = ELSE;
     string curToken;
     int lineNumber;
+    dealError *dealError;
 private:
     void getNumber();
 
     void getText();
 
-    void getString();
+    int getString();
 
     void getSymbol();
-
-    //void printOut();
 
     void examine();
 

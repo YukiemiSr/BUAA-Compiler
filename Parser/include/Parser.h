@@ -8,23 +8,36 @@
 #include "../../Lexer/include/Lexer.h"
 #include "vector"
 #include "Tree.h"
-
+#include "../../SymbolTable/Symbol.h"
+#include "../../SymbolTable/SymbolTable.h"
+#include "string"
+using namespace std;
 class Parser {
 private:
     Lexer lexer;
     vector<Token *> tokenList;
     int curTokenNumber;
+    int curLineNumber;
     LexerType curType = ELSE;
     string curToken;
+    SymbolTable *topTable;
+    SymbolTable *curTable;
+    map<int, SymbolTable*> tableMap;
+    int prevLineNumber;
+    int tableCnt = 1;
 public:
     Tree *finalTree;
+    dealError *dealError;
+    vector<errorItem*> errorList;
 private:
+    void FuncTypeError(vector<int> prarms, int lineNumber, string name);
+    Tree *ErrorLeaf(string str,Tree* dad);
     Tree *initLeaf(Tree* dad,GrammerType type);
     Tree *parse_CompUnit();
     Tree *parse_Exp(Tree *dad);
     Tree *parse_LVal(Tree *dad);
     Tree *parse_PrimaryExp(Tree *dad);
-    Tree *parse_FuncRParams(Tree *dad);
+    Tree *parse_FuncRParams(Tree *dad,string name);
     Tree *parse_Number(Tree *dad);
     Tree *parse_UnaryExp(Tree *dad);
     Tree *parse_UnaryOp(Tree *dad);
@@ -52,15 +65,22 @@ private:
     Tree *parse_LAndExp(Tree *dad);
     Tree *parse_RelExp(Tree *dad);
     Tree *parse_EqExp(Tree *dad);
-    Tree *parse_FuncFParms(Tree *dad);
+    Tree *parse_FuncFParms(Tree *dad,string name,int lineNumber,string type);
     Tree *parse_FuncFParm(Tree *dad);
+    errorItem* undefineIndent(const string& s,int lineNumber);
+    errorItem *changeConst(const string &s, int lineNumber);
 public:
-    Parser(std::ifstream &input, std::ofstream &output);
+    Parser(std::ifstream &input, std::ofstream &output, SymbolTable *table,class dealError* error);
 
     void parse();
 
     void next();
 
+    errorItem *funcNumError(const string &s, int lineNumber, int num);
+
+    int judgeReturn(int begin, int end);
+
+    int DealFuncPrarms(string name);
 };
 
 #endif //COMPILER_PARSER_H

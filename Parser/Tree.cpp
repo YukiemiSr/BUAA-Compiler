@@ -5,12 +5,25 @@
 #include "include/Tree.h"
 #include "include/parserDefine.h"
 #include "map"
+#include "../include/Token.h"
+
 using namespace std;
 
 Token::Token(LexerType type, std::string &str, int num) {
     this->lineNumber = num;
     this->nodeType = type;
     this->nodeStr = str;
+}
+Token::Token(std::string &str) {
+    this->nodeType = ERROR;
+    this->nodeStr = str;
+}
+
+Token::Token(LexerType type, string &str, int num, int printnum) {
+    this->nodeType = type;
+    this->nodeStr = str;
+    this->lineNumber = num;
+    this->printfNum = printnum;
 }
 
 Tree::Tree(Tree *dad, GrammerType type, Token *token1) {

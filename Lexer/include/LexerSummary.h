@@ -47,7 +47,8 @@ enum LexerType {
     RBRACK,//]
     LBRACE,//{
     RBRACE,//}
-    ELSE//
+    ELSE,//
+    ERROR
 };
 const map<string, LexerType> ReservedWordMap{
         {"main",     MAINTK},

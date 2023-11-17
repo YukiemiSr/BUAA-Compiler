@@ -43,4 +43,5 @@ struct errorItem {
     errorType type;
     errorItem(int lineNumber,errorType errorType): lineNumber(lineNumber),type(errorType) {};
 };
+
 #endif //COMPILER_ERRORITEM_H

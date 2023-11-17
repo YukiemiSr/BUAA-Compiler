@@ -1,12 +1,11 @@
 #include "include/Lexer.h"
 #include "iostream"
 #include  <fstream>
-#include "../Parser/include/Tree.h"
-
+#include <utility>
 #define isSpace(x) (x == ' ')||(x == '\r')||(x == '\t') || (x == '\n')
 
 Lexer::Lexer(std::ifstream &input, std::ofstream &output) : input(input), output(output) {
-    this->lineNumber = 0;
+    this->lineNumber = 1;
     while (getline(input, curLine)) {
         sourceLines.push_back(curLine);
     }
@@ -46,7 +45,11 @@ Token *Lexer::next() {
     c_str = curLine[pos];
     if (isdigit(curLine[pos])) getNumber();
     else if (isalpha(curLine[pos]) || curLine[pos] == '_') getText();
-    else if (curLine[pos] == '"') getString();
+    else if (curLine[pos] == '"') {
+        int cnt = getString();
+        auto *token = new Token(this->curType, this->curToken, this->lineNumber,cnt);
+        return token;
+    }
     else if (str_symbolMap.count(c_str) > 0) getSymbol();
     auto *token = new Token(this->curType, this->curToken, this->lineNumber);
     return token;
@@ -77,18 +80,28 @@ void Lexer::getText() {
    // printOut();
 }
 
-void Lexer::getString() {
+int Lexer::getString() {
     string l;
+    int cnt = 0;
     l += '"';
     pos++;
     while (curLine[pos] != '"' && pos < curLine.length()) {
-        l += curLine[pos++];
+        char s = curLine[pos];
+        if(s == '%') {
+            cnt++;
+            l += curLine[pos++];
+        }else {
+            if(!(s == 32 || s == 33 || (s >= 40 && s <= 126))) {
+                this->dealError->a_illegalSymbol(lineNumber);
+            }
+            l += curLine[pos++];
+        }
     }
     pos++;
     l += '"';
     this->curToken = l;
     this->curType = STRCON;
-    //printOut();
+    return cnt;
 }
 
 void Lexer::getSymbol() {

@@ -44,6 +44,7 @@ enum GrammerType {
     LAndExp,
     ConstDef,
     VarDef,
+    Error,
     leaf
 };
 const map<GrammerType, string> garmmerOutput {

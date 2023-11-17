@@ -10,14 +10,7 @@
 #include "../../Lexer/include/LexerSummary.h"
 #include "string"
 #include "map"
-struct Token {
-    Token(LexerType type, std::string &str, int num);
-
-    LexerType nodeType;
-    std::string nodeStr;
-    int lineNumber;
-};
-
+#include "../../include/Token.h"
 class Tree {
 private:
     Tree *father = nullptr;
