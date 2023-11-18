@@ -4,6 +4,7 @@
 #include "SymbolTable/SymbolTable.h"
 #include <algorithm>
 #include "Error/errorItem.h"
+#define ERROR
 #define PARSER_ANALYSIS
 using namespace std;
 void ErrorOutPut(std::ofstream &output,vector<errorItem*> errorList);
@@ -29,8 +30,9 @@ int main() {
     auto error = new dealError();
     Parser parser(input, output, symbolTable,error);
     parser.parse();
-    out(parser.finalTree,output);
-    //ErrorOutPut(errorOut,parser.dealError->errorList);
+    //out(parser.finalTree,output);
+    //if(parser.dealError->errorList.size() == 0) cout << "no ERROR" << endl;
+    ErrorOutPut(errorOut,parser.dealError->errorList);
 #ifdef ERROR
 #endif
     input.close();
@@ -55,6 +57,7 @@ void ErrorOutPut(std::ofstream &output,vector<errorItem*> errorList) {
     sort(errorList.begin(),errorList.end(),compareErrorItems);
     for(errorItem* item: errorList) {
         errorType c = item->type;
+        //cout << item->lineNumber << " " << errorOutputMap.find(c)->second << endl;
         output << item->lineNumber << " " << errorOutputMap.find(c)->second << endl;
     }
 }

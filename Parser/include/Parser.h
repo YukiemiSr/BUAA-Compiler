@@ -27,6 +27,7 @@ private:
     int tableCnt = 1;
     int depth = 0;//辅助左值分析
     int funcDepth = 0;//FuncType辅助分析
+    int forNumber = 0;//循环块辅助分析
 public:
     Tree *finalTree;
     dealError *dealError;

@@ -12,8 +12,7 @@ class SymbolTable{
 public:
     int id;
     int fatherId;
-    int status = 0; //true 在循环中
-    int type = 0;//int 1 void 2 notFunc 0
+    int type = 0;//int 1 void 2  for 3  notFunc 0
     std::map<std::string,Symbol*> directory;
     std::map<string,vector<Symbol*>> funcMap;
     SymbolTable(int id1,int dadId,int type):id(id1),fatherId(dadId),type(type){};

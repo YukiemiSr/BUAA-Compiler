@@ -51,7 +51,7 @@ Tree* Parser::ErrorLeaf(string str,Tree* dad) {
 void Parser::parse() {
     this->finalTree = parse_CompUnit();
 }
-/* CompUnit → {Decl} {FuncDef} MainFuncDef */
+/* CompUnit 鈫?{Decl} {FuncDef} MainFuncDef */
 Tree *Parser::parse_CompUnit() {
     Tree *tree = new Tree(nullptr, CompUnit);
     while(tokenList[curTokenNumber+2]->nodeType != LPARENT) {
@@ -74,7 +74,7 @@ Tree *Parser::parse_Decl(Tree *dad) {
     return tree;
 }
 
-/* FuncDef → FuncType Ident '(' [FuncFParams] ')' Block */ //建立新表 b g j
+/* FuncDef 鈫?FuncType Ident '(' [FuncFParams] ')' Block */ //寤虹珛鏂拌〃 b g j
 Tree *Parser::parse_FuncDef(Tree *dad) {
     Tree* tree = new Tree(dad,FuncDef);
     int lineNumber = curLineNumber;
@@ -95,17 +95,17 @@ Tree *Parser::parse_FuncDef(Tree *dad) {
     tableMap[tableCnt]=table;
     curTable = table;
     //[FuncParams]
-    tree->addChild(initLeaf(tree,leaf));//吸收左括号
+    tree->addChild(initLeaf(tree,leaf));//鍚告敹宸︽嫭鍙?
     int sym = 0;
-    if(curType != RPARENT) {//不是右小括号
-        if(curType != LBRACE) {//不是右小括号，同时不是左大括号，那进行形参解析
+    if(curType != RPARENT) {//涓嶆槸鍙冲皬鎷彿
+        if(curType != LBRACE) {//涓嶆槸鍙冲皬鎷彿锛屽悓鏃朵笉鏄乏澶ф嫭鍙凤紝閭ｈ繘琛屽舰鍙傝В鏋?
             tree->addChild(parse_FuncFParms(tree,name,lineNumber,s));
             sym = 1;
             if(curType != RPARENT) {
                 dealError->j_LackRparent(lineNumber);
                 tree->addChild(ErrorLeaf(")",tree));
             }else tree->addChild(initLeaf(tree,leaf));
-        } //这一个是左大括号
+        } //杩欎竴涓槸宸﹀ぇ鎷彿
         else{
             dealError->j_LackRparent(lineNumber);
             tree->addChild(ErrorLeaf(")",tree));
@@ -116,13 +116,13 @@ Tree *Parser::parse_FuncDef(Tree *dad) {
     //block
     if(sym == 0) {
         auto* sym = new Symbol(name,3,0,s,lineNumber);
-        auto* item = tableMap[curTable->fatherId]->addSymbol(name,sym,lineNumber);//加到父符号表中
+        auto* item = tableMap[curTable->fatherId]->addSymbol(name,sym,lineNumber);//鍔犲埌鐖剁鍙疯〃涓?
         if(item != nullptr) dealError->addError(item);
     }
     tree->addChild(parse_Block( tree));
     return tree;
 }
-//FuncFParams → FuncFParam { ',' FuncFParam }
+//FuncFParams 鈫?FuncFParam { ',' FuncFParam }
 Tree *Parser::parse_FuncFParms(Tree *dad,string name,int lineNumber,string type){
     Tree* tree = new Tree(dad,FuncFParams);
     tree->addChild(parse_FuncFParm(tree));
@@ -138,7 +138,7 @@ Tree *Parser::parse_FuncFParms(Tree *dad,string name,int lineNumber,string type)
     tableMap[curTable->fatherId]->addFuncPrarms(curTable,name,cnt);
     return tree;
 }
-// FuncFParam → BType Ident ['[' '] ' { '[' ConstExp ']' }] b k /
+// FuncFParam 鈫?BType Ident ['[' '] ' { '[' ConstExp ']' }] b k /
 Tree *Parser::parse_FuncFParm(Tree* dad){
     Tree *tree = new Tree(dad,FuncFParam);
     tree->addChild(parse_BType(tree));
@@ -169,7 +169,7 @@ Tree *Parser::parse_FuncFParm(Tree* dad){
     if(item != nullptr) dealError->addError(item);
     return tree;
 }
-/* MainFuncDef → 'int' 'main' '(' ')' Block */ // g j
+/* MainFuncDef 鈫?'int' 'main' '(' ')' Block */ // g j
 Tree *Parser::parse_MainFuncDef(Tree *dad) {
     Tree *tree = new Tree(dad,MainFuncDef);
     tree->addChild(initLeaf(tree,leaf));
@@ -195,18 +195,14 @@ Tree *Parser::parse_Exp(Tree *dad) {
     return tree;
 }
 
-Tree *Parser::parse_LVal(Tree *dad) { // c k
+Tree *Parser::parse_LVal(Tree *dad) { // c k Ident {'[' Exp ']'}
     Tree *tree = new Tree(dad,LVal);
     int base = 0;
     //ident
     auto* tmp = undefineIndent(curToken,curLineNumber);
     if(tmp!= nullptr) dealError->addError(tmp);
-    if(tmp == nullptr) {//存在这个定义
-        auto* item1 =changeConst(curToken,curLineNumber);
+    if(tmp == nullptr) {//瀛樺湪杩欎釜瀹氫箟
         base = getDepth(curToken,curLineNumber);
-        if(item1 != nullptr) {
-            dealError->errorList.push_back(item1);
-        }
     }
     tree->addChild(initLeaf(tree,leaf));
     //{[Exp]}
@@ -217,7 +213,7 @@ Tree *Parser::parse_LVal(Tree *dad) { // c k
         //]
         if(curType != RBRACK) {
             dealError->k_LackRbrack(curLineNumber);
-            tree->addChild(tree);
+            tree->addChild(ErrorLeaf("]",tree));
         }else tree->addChild(initLeaf(tree,leaf));
     }
     this->depth = base;
@@ -237,7 +233,7 @@ Tree *Parser::parse_PrimaryExp(Tree *dad) {
     }
     return tree;
 }
-/* FuncRParams → Exp { ',' Exp } */
+/* FuncRParams 鈫?Exp { ',' Exp } */
 Tree *Parser::parse_FuncRParams(Tree *dad,string name) {
     Tree* tree = new Tree(dad,Number);
     int line = curLineNumber;
@@ -273,7 +269,7 @@ Tree *Parser::parse_UnaryExp(Tree *dad) { //c d e j PrimaryExp | Ident '(' [Func
         auto* tmp =undefineIndent(curToken,curLineNumber);
         if(tmp != nullptr) dealError->addError(tmp);
         else {
-            if(funcDepth > 0) {//目前是需要返回值的。
+            if(funcDepth > 0) {//鐩墠鏄渶瑕佽繑鍥炲€肩殑銆?
                 string s = dealFuncReturnValue(curToken);
                 if(s == "void") dealError->e_FuncTypeError(curLineNumber);
             }
@@ -283,15 +279,15 @@ Tree *Parser::parse_UnaryExp(Tree *dad) { //c d e j PrimaryExp | Ident '(' [Func
         int line = curLineNumber;
         tree->addChild(initLeaf(tree,leaf));//Ident
         tree->addChild(initLeaf(tree,leaf));//(
-        if(curType != RPARENT) {//不是右小括号
+        if(curType != RPARENT) {//涓嶆槸鍙冲皬鎷彿
             if(curType == LPARENT || curType == INTCON
-                    ||(curType == IDENFR)
-                    ||(curType == NOT || curType == PLUS || curType == MINU)) {
-                //是表达式
+               ||(curType == IDENFR)
+               ||(curType == NOT || curType == PLUS || curType == MINU)) {
+                //鏄〃杈惧紡
                 funcDepth++;
                 tree->addChild(parse_FuncRParams(tree,name));
                 funcDepth--;
-            }else {//是右小括号
+            }else {//鏄彸灏忔嫭鍙?
                 funcNumError(name,curLineNumber,0);
                 dealError->j_LackRparent(curLineNumber);
                 tree->addChild(ErrorLeaf(")",tree));
@@ -335,22 +331,22 @@ Tree *Parser::parse_MulExp(Tree *dad) {
 }
 
 Tree *Parser::parse_AddExp(Tree *dad) {
-   Tree *tree = new Tree(nullptr,AddExp);
-   Tree *child;
-   tree->addChild(parse_MulExp(tree));
-   while(curType == PLUS || curType == MINU) {
-       Tree *temp = new Tree(nullptr,AddExp);
-       temp->addChild(tree);
-       tree->setDad(temp);
-       tree = temp;
-       tree->addChild(initLeaf(tree));
-       child = parse_MulExp(tree);
-       tree->addChild(child);
-   }
-   tree->setDad(dad);
-   return tree;
+    Tree *tree = new Tree(nullptr,AddExp);
+    Tree *child;
+    tree->addChild(parse_MulExp(tree));
+    while(curType == PLUS || curType == MINU) {
+        Tree *temp = new Tree(nullptr,AddExp);
+        temp->addChild(tree);
+        tree->setDad(temp);
+        tree = temp;
+        tree->addChild(initLeaf(tree));
+        child = parse_MulExp(tree);
+        tree->addChild(child);
+    }
+    tree->setDad(dad);
+    return tree;
 }
-/* ConstDecl → 'const' BType ConstDef { ',' ConstDef } ';' */
+/* ConstDecl 鈫?'const' BType ConstDef { ',' ConstDef } ';' */
 Tree *Parser::parse_ConstDecl(Tree *dad) {
     Tree *tree = new Tree(dad,ConstDecl);
     //const
@@ -368,11 +364,11 @@ Tree *Parser::parse_ConstDecl(Tree *dad) {
         dealError->i_LackSemicn(prevLineNumber);
         tree->addChild(ErrorLeaf(";",tree));
     }else  tree->addChild(initLeaf(tree,leaf));
-    //就算没有也得补上
+    //灏辩畻娌℃湁涔熷緱琛ヤ笂
     return tree;
 }
 
-/* VarDecl → BType VarDef { ',' VarDef } ';' */ // i
+/* VarDecl 鈫?BType VarDef { ',' VarDef } ';' */ // i
 Tree *Parser::parse_VarDecl(Tree *dad) {
     Tree *tree = new Tree(dad, VarDecl);
     tree->addChild(initLeaf(tree,leaf));
@@ -387,13 +383,13 @@ Tree *Parser::parse_VarDecl(Tree *dad) {
     }else tree->addChild(initLeaf(tree,leaf));
     return tree;
 }
-/* FuncType → 'void' | 'int' */
+/* FuncType 鈫?'void' | 'int' */
 Tree *Parser::parse_FuncType(Tree *dad) {
     Tree *tree = new Tree(dad, FuncType);
     tree->addChild(initLeaf(tree,leaf));
     return tree;
 }
-//* Block → '{' { BlockItem } '}'
+//* Block 鈫?'{' { BlockItem } '}'
 Tree *Parser::parse_Block(Tree *dad) {
     Tree* tree = new Tree(dad,Block);
     //{
@@ -402,26 +398,26 @@ Tree *Parser::parse_Block(Tree *dad) {
     while(curType != RBRACE) {
         tree->addChild(parse_BlockItem(tree));
     }
-    int end = curTokenNumber;//end是右大括号
+    int end = curTokenNumber;//end鏄彸澶ф嫭鍙?
     tree->addChild(initLeaf(tree,leaf));//
     int type = judgeReturn(begin,end);
     int pos = -1;
     for(int i = begin;i <= end;i++) {
         if(tokenList[i]->nodeType==RETURNTK) {
-           pos = tokenList[i]->lineNumber;
+            pos = tokenList[i]->lineNumber;
         }
     }
-        if(type == 0){//没有return
-            if(curTable->type == 1 || curTable->type == 4) {//当前是int类型
-                dealError->g_LackReturn(tokenList[end]->lineNumber);
-            }
+    if(type == 0){//娌℃湁return
+        if(curTable->type == 1 || curTable->type == 4) {//褰撳墠鏄痠nt绫诲瀷
+            dealError->g_LackReturn(tokenList[end]->lineNumber);
         }
-        else{//有return
-            if(curTable->type == 2) {
-                dealError->f_ReturnUnMatch(pos);
-            }
+    }
+    else{//鏈塺eturn
+        if(curTable->type == 2) {
+            dealError->f_ReturnUnMatch(pos);
         }
-    curTable = tableMap[curTable->fatherId];//返回原符号表
+    }
+    curTable = tableMap[curTable->fatherId];//杩斿洖鍘熺鍙疯〃
     return tree;
 }
 int Parser::judgeReturn(int begin,int end){
@@ -439,7 +435,7 @@ Tree *Parser::parse_BType(Tree *dad) {
     tree->addChild(initLeaf(tree,leaf));
     return tree;
 }
-//ConstDef → Ident { '[' ConstExp ']' } '=' ConstInitVal //CreateSym  b k
+//ConstDef 鈫?Ident { '[' ConstExp ']' } '=' ConstInitVal //CreateSym  b k
 Tree *Parser::parse_ConstDef(Tree *dad) {
     Tree* tree = new Tree(dad,ConstDef);
     string name = curToken;//ident
@@ -453,8 +449,7 @@ Tree *Parser::parse_ConstDef(Tree *dad) {
         if(curType != RBRACK) {//k
             tree->addChild(ErrorLeaf("]",tree));
             dealError->k_LackRbrack(curLineNumber);
-        }
-        tree->addChild(initLeaf(tree,leaf));
+        }else tree->addChild(initLeaf(tree,leaf));
         depth++;
     }
     auto* symbol = new Symbol(name,2,depth,"int",lineNumber);
@@ -464,7 +459,7 @@ Tree *Parser::parse_ConstDef(Tree *dad) {
     tree->addChild(parse_ConstInitVal(tree));
     return tree;
 }
-/* VarDef → Ident { '[' ConstExp ']' }  |  Ident { '[' ConstExp ']' } '=' InitVal */ // b
+/* VarDef 鈫?Ident { '[' ConstExp ']' }  |  Ident { '[' ConstExp ']' } '=' InitVal */ // b
 Tree *Parser::parse_VarDef(Tree *dad) {
     Tree* tree = new Tree(dad,VarDef);
     string name = curToken;
@@ -490,7 +485,7 @@ Tree *Parser::parse_VarDef(Tree *dad) {
     if(s != nullptr)  dealError->addError(s);
     return tree;
 }
-/* BlockItem → Decl | Stmt */
+/* BlockItem 鈫?Decl | Stmt */
 Tree *Parser::parse_BlockItem(Tree *dad) {
     Tree *tree = new Tree(dad,BlockItem);
     if(curType == CONSTTK || curType == INTTK) {
@@ -505,11 +500,11 @@ Tree *Parser::parse_ConstExp(Tree *dad) {
     tree->addChild(parse_AddExp(tree));
     return tree;
 }
-/* ConstInitVal → ConstExp | '{' [ ConstInitVal { ',' ConstInitVal } ] '}' *///存疑
+/* ConstInitVal 鈫?ConstExp | '{' [ ConstInitVal { ',' ConstInitVal } ] '}' *///瀛樼枒
 Tree *Parser::parse_ConstInitVal(Tree *dad) {
     Tree *tree = new Tree(dad,ConstInitVal);
     if(curType != LBRACE) {
-            tree->addChild(parse_ConstExp(tree));
+        tree->addChild(parse_ConstExp(tree));
     }else {
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(parse_ConstInitVal(tree));
@@ -521,7 +516,7 @@ Tree *Parser::parse_ConstInitVal(Tree *dad) {
     }
     return tree;
 }
-/* InitVal → Exp | '{' [ InitVal { ',' InitVal } ] '}' */
+/* InitVal 鈫?Exp | '{' [ InitVal { ',' InitVal } ] '}' */
 Tree *Parser::parse_InitVal(Tree *dad) {
     Tree *tree = new Tree(dad,InitVal);
     if(curType != LBRACE) {
@@ -544,7 +539,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(parse_Cond(tree));
-        if(curType != RBRACK){
+        if(curType != RPARENT){
             dealError->j_LackRparent(curLineNumber);
             tree->addChild(ErrorLeaf(")",tree));
         }else tree->addChild(initLeaf(tree,leaf));
@@ -557,7 +552,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
     else if(curType == FORTK) {//for
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(initLeaf(tree,leaf));
-        curTable->status++;
+        forNumber++;
         if(curType != SEMICN) {
             tree->addChild(parse_ForStmt(tree));
         }
@@ -571,6 +566,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
         }
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(parse_Stmt(tree));
+        forNumber--;
     }
     else if(curType == BREAKTK || curType == CONTINUETK) {//break||continue i m
         tree->addChild(initLeaf(tree,leaf));
@@ -578,14 +574,13 @@ Tree *Parser::parse_Stmt(Tree *dad) {
             dealError->i_LackSemicn(prevLineNumber);
             tree->addChild(ErrorLeaf(";",tree));
         }
-        if(curTable->status == 0) dealError->m_repeatError(curLineNumber);
-        else curTable--;
+        if(this->forNumber == 0) dealError->m_repeatError(curLineNumber);
         tree->addChild(initLeaf(tree,leaf));
     }
     else if(curType == RETURNTK) {//return  f i
         tree->addChild(initLeaf(tree,leaf));
-        if(curType != SEMICN) {//不是分号
-            if(curType == RBRACE) {//是右大括号
+        if(curType != SEMICN) {//涓嶆槸鍒嗗彿
+            if(curType == RBRACE) {//鏄彸澶ф嫭鍙?
                 dealError->i_LackSemicn(prevLineNumber);
                 tree->addChild(ErrorLeaf(";",tree));
             }
@@ -601,7 +596,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
     else if(curType == PRINTFTK) {//printf i j l
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(initLeaf(tree,leaf));
-        auto* tmp = tokenList[curLineNumber];
+        auto* tmp = tokenList[curTokenNumber];
         tree->addChild(parse_FormatString(tree));
         int cnt = 0;
         while(curType == COMMA) {
@@ -621,7 +616,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
 
     }
     else if(curType == LBRACE) {//block
-        auto* symbolTable = new SymbolTable(tableCnt++,curTable->id,0);
+        auto* symbolTable = new SymbolTable(++tableCnt,curTable->id,0);
         tableMap[tableCnt]=symbolTable;
         curTable = symbolTable;
         tree->addChild(parse_Block(tree));
@@ -630,17 +625,24 @@ Tree *Parser::parse_Stmt(Tree *dad) {
         tree->addChild(initLeaf(tree,leaf));
     }
     else if(curType == LPARENT || curType == INTCON
-           ||(curType == IDENFR && tokenList[curTokenNumber+1]->nodeType == LPARENT)
-           ||(curType == NOT || curType == PLUS || curType == MINU)) {//exp
+            ||(curType == IDENFR && tokenList[curTokenNumber+1]->nodeType == LPARENT)
+            ||(curType == NOT || curType == PLUS || curType == MINU)) {//exp
         tree->addChild(parse_Exp(tree));
         tree->addChild(initLeaf(tree,leaf));
     }
-    else {//左值情况
+    else {//宸﹀€兼儏鍐?
         int tmp = curTokenNumber;
-        while(tokenList[tmp]->nodeType != ASSIGN && tokenList[tmp]->nodeType != SEMICN) {//=和;谁先出现
+        while(tokenList[tmp]->nodeType != ASSIGN && tokenList[tmp]->nodeType != SEMICN) {//=鍜?璋佸厛鍑虹幇
             tmp++;
         }
-        if(tokenList[tmp]->nodeType == ASSIGN) {//下一个为=，则一定是Lval h i
+        if(tokenList[tmp]->nodeType == ASSIGN) {//涓嬩竴涓负=锛屽垯涓€瀹氭槸Lval h i
+            auto* item1 = undefineIndent(curToken,curLineNumber);
+            if(item1 == nullptr) { //鍙互鎵惧埌
+                auto* item = changeConst(curToken,curLineNumber);
+                if(item != nullptr) {
+                    dealError->addError(item);
+                }
+            }
             tree->addChild(parse_LVal(tree));
             tree->addChild(initLeaf(tree,leaf));
             if(curType == GETINTTK) { // h i j
@@ -665,7 +667,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
                 }else  tree->addChild(initLeaf(tree,leaf));
             }
         }
-        else {//第二个不是等号
+        else {//绗簩涓笉鏄瓑鍙?
             //Exp
             tree->addChild(parse_Exp(tree));
             int line1 = curLineNumber;
@@ -688,11 +690,14 @@ Tree *Parser::parse_Cond(Tree *dad) {
     tree->addChild(parse_LOrExp(tree));
     return tree;
 }
-//ForStmt → LVal '=' Exp h
+//ForStmt 鈫?LVal '=' Exp h
 Tree *Parser::parse_ForStmt(Tree *dad) {
     Tree *tree = new Tree(dad,ForStmt);
-    auto* tmp = changeConst(curToken,curLineNumber);
-    if(tmp != nullptr) dealError->addError(tmp);
+    auto *item = undefineIndent(curToken,curLineNumber);
+    if(item  == nullptr) {
+        auto* tmp = changeConst(curToken,curLineNumber);
+        if(tmp != nullptr) dealError->addError(tmp);
+    }
     tree->addChild(parse_LVal(tree));
     //=
     tree->addChild(initLeaf(tree));
@@ -700,7 +705,7 @@ Tree *Parser::parse_ForStmt(Tree *dad) {
     return tree;
 }
 
-//LOrExp → LAndExp | LOrExp '||' LAndExp
+//LOrExp 鈫?LAndExp | LOrExp '||' LAndExp
 Tree *Parser::parse_LOrExp(Tree *dad) {
     Tree *tree = new Tree(dad,LOrExp);
     Tree *child;
@@ -717,7 +722,7 @@ Tree *Parser::parse_LOrExp(Tree *dad) {
     tree->setDad(dad);
     return tree;
 }
-//LAndExp → EqExp | LAndExp '&&' EqExp
+//LAndExp 鈫?EqExp | LAndExp '&&' EqExp
 Tree *Parser::parse_LAndExp(Tree *dad) {
     Tree *tree = new Tree(dad,LAndExp) ;
     Tree *child;
@@ -734,36 +739,36 @@ Tree *Parser::parse_LAndExp(Tree *dad) {
     tree->setDad(dad);
     return tree;
 }
-//EqExp → RelExp | EqExp ('==' | '!=') RelExp
+//EqExp 鈫?RelExp | EqExp ('==' | '!=') RelExp
 Tree *Parser::parse_EqExp(Tree *dad) {
     Tree *tree = new Tree(dad,EqExp);
     Tree *child;
     tree->addChild(parse_RelExp(tree));
     while(curType == EQL || curType == NEQ) {
-       Tree *temp = new Tree(nullptr,EqExp);
-       temp->addChild(tree);
-       tree->setDad(temp);
-       tree = temp;
-       tree->addChild(initLeaf(tree));
-       child = parse_RelExp(tree);
-       tree->addChild(child);
+        Tree *temp = new Tree(nullptr,EqExp);
+        temp->addChild(tree);
+        tree->setDad(temp);
+        tree = temp;
+        tree->addChild(initLeaf(tree));
+        child = parse_RelExp(tree);
+        tree->addChild(child);
     }
     tree->setDad(dad);
     return tree;
 }
-//RelExp → AddExp | RelExp ('<' | '>' | '<=' | '>=') AddExp
+//RelExp 鈫?AddExp | RelExp ('<' | '>' | '<=' | '>=') AddExp
 Tree *Parser::parse_RelExp(Tree *dad) {
     Tree *tree = new Tree(dad,RelExp);
     Tree *child;
     tree->addChild(parse_AddExp(tree));
     while(curType == LEQ || curType == LSS || curType == GRE || curType == GEQ) {
-      Tree *temp = new Tree(nullptr,RelExp);
-      temp->addChild(tree);
-      tree->setDad(temp);
-      tree = temp;
-      tree->addChild(initLeaf(tree));
-      child = parse_AddExp(tree);
-      tree->addChild(child);
+        Tree *temp = new Tree(nullptr,RelExp);
+        temp->addChild(tree);
+        tree->setDad(temp);
+        tree = temp;
+        tree->addChild(initLeaf(tree));
+        child = parse_AddExp(tree);
+        tree->addChild(child);
     }
     tree->setDad(dad);
     return tree;
@@ -788,7 +793,7 @@ int Parser::getDepth(const string& s,int lineNumber){
     auto* tmpTable = curTable;
     while(true) {
         if(tmpTable->id == topTable->id) {
-           return tmpTable->directory[s]->depth;
+            return tmpTable->directory[s]->depth;
         }
         if(tmpTable->directory.count(s) == 0) {
             tmpTable = tableMap[tmpTable->fatherId];
@@ -820,7 +825,7 @@ errorItem* Parser::funcNumError(const string& s,int lineNumber, int num) {
     auto* tmpTable = curTable;
     while(true) {
         if(tmpTable->id == topTable->id) {
-            if(tmpTable->funcMap.count(s)> 0){//存在func表项
+            if(tmpTable->funcMap.count(s)> 0){//瀛樺湪func琛ㄩ」
                 if(tmpTable->funcMap[s].size() != num) {
                     dealError->d_FuncNumError(lineNumber);
                     auto* item = new errorItem(lineNumber, FuncNumError);
@@ -837,7 +842,7 @@ errorItem* Parser::funcNumError(const string& s,int lineNumber, int num) {
         if(tmpTable->directory.count(s) == 0) {
             tmpTable = tableMap[tmpTable->fatherId];
         }else {
-            if(tmpTable->funcMap.count(s)> 0){//存在func表项
+            if(tmpTable->funcMap.count(s)> 0){//瀛樺湪func琛ㄩ」
                 if(tmpTable->funcMap[s].size() != num) {
                     dealError->d_FuncNumError(lineNumber);
                     auto* item = new errorItem(lineNumber, FuncNumError);
@@ -853,7 +858,7 @@ errorItem* Parser::funcNumError(const string& s,int lineNumber, int num) {
         }
     }
 }
-void Parser::FuncTypeError(vector<int> prarms,int lineNumber,string name){//理应不存在找不到的问题
+void Parser::FuncTypeError(vector<int> prarms,int lineNumber,string name){//鐞嗗簲涓嶅瓨鍦ㄦ壘涓嶅埌鐨勯棶棰?
     auto* tmpTable = curTable;
     while(true) {
         if(tmpTable->id == topTable->id) {
