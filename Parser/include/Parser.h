@@ -25,6 +25,8 @@ private:
     map<int, SymbolTable*> tableMap;
     int prevLineNumber;
     int tableCnt = 1;
+    int depth = 0;//辅助左值分析
+    int funcDepth = 0;//FuncType辅助分析
 public:
     Tree *finalTree;
     dealError *dealError;
@@ -81,6 +83,10 @@ public:
     int judgeReturn(int begin, int end);
 
     int DealFuncPrarms(string name);
+
+    int getDepth(const string &s, int lineNumber);
+
+    string dealFuncReturnValue(string name);
 };
 
 #endif //COMPILER_PARSER_H

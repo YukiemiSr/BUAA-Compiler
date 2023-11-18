@@ -5,7 +5,6 @@
 #include <algorithm>
 #include "Error/errorItem.h"
 #define PARSER_ANALYSIS
-#define ERROR
 using namespace std;
 void ErrorOutPut(std::ofstream &output,vector<errorItem*> errorList);
 void out(Tree* tree,std::ofstream &output);
@@ -30,8 +29,8 @@ int main() {
     auto error = new dealError();
     Parser parser(input, output, symbolTable,error);
     parser.parse();
-    ErrorOutPut(errorOut,parser.dealError->errorList);
     out(parser.finalTree,output);
+    //ErrorOutPut(errorOut,parser.dealError->errorList);
 #ifdef ERROR
 #endif
     input.close();
@@ -57,7 +56,6 @@ void ErrorOutPut(std::ofstream &output,vector<errorItem*> errorList) {
     for(errorItem* item: errorList) {
         errorType c = item->type;
         output << item->lineNumber << " " << errorOutputMap.find(c)->second << endl;
-        cout << item->lineNumber << " " << errorOutputMap.find(c)->second << endl;
     }
 }
 #endif

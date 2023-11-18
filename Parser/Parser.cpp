@@ -116,7 +116,8 @@ Tree *Parser::parse_FuncDef(Tree *dad) {
     //block
     if(sym == 0) {
         auto* sym = new Symbol(name,3,0,s,lineNumber);
-        tableMap[curTable->fatherId]->addSymbol(name,sym,lineNumber);//加到父符号表中
+        auto* item = tableMap[curTable->fatherId]->addSymbol(name,sym,lineNumber);//加到父符号表中
+        if(item != nullptr) dealError->addError(item);
     }
     tree->addChild(parse_Block( tree));
     return tree;
@@ -132,7 +133,8 @@ Tree *Parser::parse_FuncFParms(Tree *dad,string name,int lineNumber,string type)
         tree->addChild(parse_FuncFParm(tree));
     }
     auto* sym = new Symbol(name,3,0,type,lineNumber);
-    tableMap[curTable->fatherId]->addSymbol(name,sym,lineNumber);
+    auto* item = tableMap[curTable->fatherId]->addSymbol(name,sym,lineNumber);
+    if(item != nullptr) dealError->addError(item);
     tableMap[curTable->fatherId]->addFuncPrarms(curTable,name,cnt);
     return tree;
 }
@@ -163,7 +165,8 @@ Tree *Parser::parse_FuncFParm(Tree* dad){
         }
     }
     auto* sym = new Symbol(name,1,depth,attribute,line);
-    curTable->addSymbol(name,sym,line);
+    auto* item = curTable->addSymbol(name,sym,line);
+    if(item != nullptr) dealError->addError(item);
     return tree;
 }
 /* MainFuncDef → 'int' 'main' '(' ')' Block */ // g j
@@ -186,6 +189,7 @@ Tree *Parser::parse_MainFuncDef(Tree *dad) {
     return tree;
 }
 Tree *Parser::parse_Exp(Tree *dad) {
+    this->depth = 0;
     Tree *tree = new Tree(dad, Exp);
     tree->addChild(parse_AddExp(tree));
     return tree;
@@ -193,11 +197,13 @@ Tree *Parser::parse_Exp(Tree *dad) {
 
 Tree *Parser::parse_LVal(Tree *dad) { // c k
     Tree *tree = new Tree(dad,LVal);
+    int base = 0;
     //ident
     auto* tmp = undefineIndent(curToken,curLineNumber);
     if(tmp!= nullptr) dealError->addError(tmp);
-    if(tmp == nullptr) {
+    if(tmp == nullptr) {//存在这个定义
         auto* item1 =changeConst(curToken,curLineNumber);
+        base = getDepth(curToken,curLineNumber);
         if(item1 != nullptr) {
             dealError->errorList.push_back(item1);
         }
@@ -205,6 +211,7 @@ Tree *Parser::parse_LVal(Tree *dad) { // c k
     tree->addChild(initLeaf(tree,leaf));
     //{[Exp]}
     while(curType == LBRACK) {
+        base -= 1;
         tree->addChild(initLeaf(tree,leaf));
         tree->addChild(parse_Exp(tree));
         //]
@@ -213,6 +220,7 @@ Tree *Parser::parse_LVal(Tree *dad) { // c k
             tree->addChild(tree);
         }else tree->addChild(initLeaf(tree,leaf));
     }
+    this->depth = base;
     return tree;
 }
 //'(' Exp ')' | LVal | Number
@@ -231,78 +239,23 @@ Tree *Parser::parse_PrimaryExp(Tree *dad) {
 }
 /* FuncRParams → Exp { ',' Exp } */
 Tree *Parser::parse_FuncRParams(Tree *dad,string name) {
-    Tree* tree = new Tree(dad,FuncRParams);
+    Tree* tree = new Tree(dad,Number);
     int line = curLineNumber;
     vector<int> prarms;
-    if(curType == INTCON) {//常数
-      prarms.push_back(0);
-    }
-    else {//不是常数
-        string name = curToken;
-        //处理是否是函数
-        auto* item = undefineIndent(name,line);
-        if(item != nullptr) {
-
-        }
-        else {
-            int type = DealFuncPrarms(name);//处理函数返回值的问题
-            if(type == 3) {//是函数
-                prarms.push_back(0);
-            } else if(type == 0) {
-                int commonDepth = curTable->getDepth(name);
-                int pos = curTokenNumber+1;
-                int depth = 0;
-                LexerType t = tokenList[pos]->nodeType;
-                while(t != COMMA) {
-                    if(t == LBRACK) {
-                        depth++;
-                    }
-                    pos++;
-                }
-                prarms.push_back(commonDepth - depth);
-            }
-        }
-    }
     tree->addChild(parse_Exp(tree));
+    prarms.push_back(this->depth);
+    this->depth = 0;
     int cnt = 1;
     while(curType == COMMA) {
-        cnt++;
         tree->addChild(initLeaf(tree,leaf));
-        if(curType == INTCON) {//常数
-            prarms.push_back(-1);
-        }else {
-            string name = curToken;
-            auto* item = undefineIndent(name,line);
-            if(item != nullptr) {
-
-            }
-            else {
-                int type = DealFuncPrarms(name);
-                if(type == 3) {//是函数
-                    prarms.push_back(0);
-                }
-                else if(type == 0){
-                    string name = curToken;
-                    int pos = curTokenNumber+1;
-                    int depth = 0;
-                    while(tokenList[pos]->nodeType!=COMMA) {
-                        if(tokenList[pos]->nodeType == LBRACK) {
-                            depth++;
-                        }
-                        pos++;
-                    }
-                    prarms.push_back(depth);
-                }
-            }
-        }
         tree->addChild(parse_Exp(tree));
+        prarms.push_back(this->depth);
+        this->depth = 0;
+        cnt++;
     }
-    auto* tmp = funcNumError(name,curLineNumber,cnt);
-    if(tmp == nullptr) {
-        if(prarms.size() > 0) {
-            FuncTypeError(prarms,line,name);
-        }
-    }
+    auto* item = funcNumError(name,line,cnt);
+    if(item != nullptr){}
+    else  FuncTypeError(prarms,line,name);
     return tree;
 }
 
@@ -319,6 +272,12 @@ Tree *Parser::parse_UnaryExp(Tree *dad) { //c d e j PrimaryExp | Ident '(' [Func
         // Ident '(' [FuncRParams] ')'
         auto* tmp =undefineIndent(curToken,curLineNumber);
         if(tmp != nullptr) dealError->addError(tmp);
+        else {
+            if(funcDepth > 0) {//目前是需要返回值的。
+                string s = dealFuncReturnValue(curToken);
+                if(s == "void") dealError->e_FuncTypeError(curLineNumber);
+            }
+        }
         //c
         string name = curToken;
         int line = curLineNumber;
@@ -329,7 +288,9 @@ Tree *Parser::parse_UnaryExp(Tree *dad) { //c d e j PrimaryExp | Ident '(' [Func
                     ||(curType == IDENFR)
                     ||(curType == NOT || curType == PLUS || curType == MINU)) {
                 //是表达式
+                funcDepth++;
                 tree->addChild(parse_FuncRParams(tree,name));
+                funcDepth--;
             }else {//是右小括号
                 funcNumError(name,curLineNumber,0);
                 dealError->j_LackRparent(curLineNumber);
@@ -450,17 +411,12 @@ Tree *Parser::parse_Block(Tree *dad) {
            pos = tokenList[i]->lineNumber;
         }
     }
-        if(type == 1){//没有return
-            if(curTable->type == 1) {//当前是int类型
+        if(type == 0){//没有return
+            if(curTable->type == 1 || curTable->type == 4) {//当前是int类型
                 dealError->g_LackReturn(tokenList[end]->lineNumber);
             }
         }
-        else if(type == 2){//只有return
-            if(curTable->type == 1 || curTable->type == 4) {
-                dealError->g_LackReturn(tokenList[end]->lineNumber);
-            }
-        }
-        else if(type == 3){//有return有返回值
+        else{//有return
             if(curTable->type == 2) {
                 dealError->f_ReturnUnMatch(pos);
             }
@@ -469,27 +425,13 @@ Tree *Parser::parse_Block(Tree *dad) {
     return tree;
 }
 int Parser::judgeReturn(int begin,int end){
-    int sym1,sym2 = 0;
+    int sym1 = 0;
     for(int i = begin;i <= end;i++) {
         if(tokenList[i]->nodeType==RETURNTK) {
             sym1 = 1;
         }
     }
-    if(sym1 == 1) {
-        if(tokenList[end-1]->nodeType == SEMICN) {
-            if(tokenList[end-2]->nodeType != RETURNTK) {
-                sym2 = 1;
-            }
-        }else {
-            if(tokenList[end-1]->nodeType != RETURNTK) {
-                sym2 = 1;
-            }
-        }
-    }
-    if((sym1 == 0)&&(sym2 == 0)){
-        return 1;
-    }else if(sym1 == 1 && sym2 == 0) return 2;
-    else return 3;
+    return sym1;
 };
 //int
 Tree *Parser::parse_BType(Tree *dad) {
@@ -517,7 +459,7 @@ Tree *Parser::parse_ConstDef(Tree *dad) {
     }
     auto* symbol = new Symbol(name,2,depth,"int",lineNumber);
     auto* s = curTable->addSymbol(name,symbol,lineNumber);
-    if(s != nullptr) dealError->errorList.push_back(s);
+    if(s != nullptr) dealError->addError(s);
     tree->addChild(initLeaf(tree,leaf));
     tree->addChild(parse_ConstInitVal(tree));
     return tree;
@@ -545,7 +487,7 @@ Tree *Parser::parse_VarDef(Tree *dad) {
     }
     auto* symbol = new Symbol(name,1,depth,"int",lineNumber);
     auto* s = curTable->addSymbol(name,symbol,lineNumber);
-    if(s != nullptr) this->errorList.push_back(s);
+    if(s != nullptr)  dealError->addError(s);
     return tree;
 }
 /* BlockItem → Decl | Stmt */
@@ -842,6 +784,19 @@ errorItem* Parser::undefineIndent(const string& s,int lineNumber) {
         }else return nullptr;
     }
 }
+int Parser::getDepth(const string& s,int lineNumber){
+    auto* tmpTable = curTable;
+    while(true) {
+        if(tmpTable->id == topTable->id) {
+           return tmpTable->directory[s]->depth;
+        }
+        if(tmpTable->directory.count(s) == 0) {
+            tmpTable = tableMap[tmpTable->fatherId];
+        }else {
+            return tmpTable->directory[s]->depth;
+        };
+    }
+}
 errorItem* Parser::changeConst(const string& s,int lineNumber) {
     auto* tmpTable = curTable;
     while(true) {
@@ -916,29 +871,11 @@ void Parser::FuncTypeError(vector<int> prarms,int lineNumber,string name){//理�
         }
     }
 }
-int Parser::DealFuncPrarms(string name) {
+string Parser::dealFuncReturnValue (string name){
     auto* tmpTable = curTable;
     while(true) {
-        if(tmpTable->id == topTable->id) {
-            if(tmpTable->directory[name]->type == 3) {
-                string s = tmpTable->directory[name]->attribute;
-                if(s == "int") return 3;
-                else {
-                    dealError->e_FuncTypeError(curLineNumber);
-                    return -1;
-                }
-            }else return 0;
-        }
-        if(tmpTable->directory.count(name) != 0) {
-            if(tmpTable->directory[name]->type == 3) {
-                string s = tmpTable->directory[name]->attribute;
-                if(s == "int") return 3;
-                else {
-                    dealError->e_FuncTypeError(curLineNumber);
-                    return -1;
-                }
-            }else return 0;
-        }
+        if(tmpTable->id == topTable->id)  return tmpTable->directory[name]->attribute;
+        if(tmpTable->directory.count(name) > 0) return tmpTable->directory[name]->attribute;
         tmpTable = tableMap[tmpTable->fatherId];
     }
-}
+};

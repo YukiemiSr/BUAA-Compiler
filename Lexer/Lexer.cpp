@@ -85,17 +85,30 @@ int Lexer::getString() {
     int cnt = 0;
     l += '"';
     pos++;
+    int status = 0;
     while (curLine[pos] != '"' && pos < curLine.length()) {
         char s = curLine[pos];
-        if(s == '%') {
-            cnt++;
-            l += curLine[pos++];
-        }else {
-            if(!(s == 32 || s == 33 || (s >= 40 && s <= 126))) {
-                this->dealError->a_illegalSymbol(lineNumber);
+        if(status == 0) {
+            if (s == '%') {
+                if (curLine[pos + 1] != 'd') {
+                    this->dealError->a_illegalSymbol(lineNumber);
+                    status = 1;
+                } else {
+                    cnt++;
+                }
+            } else if (s == '\\') {
+                if (curLine[pos + 1] != 'n') {
+                    this->dealError->a_illegalSymbol(lineNumber);
+                    status = 1;
+                }
+            } else {
+                if (!(s == 32 || s == 33 || (s >= 40 && s <= 126))) {
+                    this->dealError->a_illegalSymbol(lineNumber);
+                    status = 1;
+                }
             }
-            l += curLine[pos++];
         }
+        l += curLine[pos++];
     }
     pos++;
     l += '"';
