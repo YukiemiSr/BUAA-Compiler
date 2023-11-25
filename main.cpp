@@ -1,14 +1,18 @@
 #include <iostream>
 #include <fstream>
-#include "Parser/include/Parser.h"
-#include "SymbolTable/SymbolTable.h"
+#include "Parser/Parser.h"
+#include "include/SymbolTable.h"
 #include <algorithm>
 #include "Error/errorItem.h"
-#define ERROR
-#define PARSER_ANALYSIS
+#include "LLVM/printIR.h"
+#include "LLVM/llvmIR.h"
 using namespace std;
 void ErrorOutPut(std::ofstream &output,vector<errorItem*> errorList);
 void out(Tree* tree,std::ofstream &output);
+ofstream fll;
+SymbolTable* totalTable;
+SymbolTable* curTable;
+map<int,SymbolTable*> tableMap;
 int main() {
     ifstream input("testfile.txt");
     if(!input.is_open()) {
@@ -26,19 +30,27 @@ int main() {
         cout << "error_errorOut" << endl;
         return 1;
     }
+    fll.open("llvm_ir.txt");
+    if(!fll.is_open()) {
+        cout << "llvm_ir not open" <<endl;
+        return 1;
+    }
     auto symbolTable = new SymbolTable(1,-1,0);//总的符号表
     auto error = new dealError();
     Parser parser(input, output, symbolTable,error);
     parser.parse();
-    //out(parser.finalTree,output);
-    //if(parser.dealError->errorList.size() == 0) cout << "no ERROR" << endl;
-    ErrorOutPut(errorOut,parser.dealError->errorList);
-#ifdef ERROR
+    totalTable = parser.topTable;
+    curTable = totalTable;
+    tableMap = parser.tableMap;
+#ifdef LLVM_generate
+    generate_CompUnit(parser.finalTree);
 #endif
     input.close();
     output.close();
-    errorOut.close();
+    //errorOut.close();
 }
+
+
 #ifdef ERROR
 
 static bool compareErrorItems(const errorItem* item1, const errorItem* item2) {
@@ -72,8 +84,8 @@ void out(Tree* tree,std::ofstream &output) {
     }
     if (tree->needOut()) {
         if(tree->token != nullptr) {
-            string s = symbolOutput.find(tree->token->nodeType)->second;
-            cout << s << " " << tree->token->nodeStr << tree->token->lineNumber <<  endl;
+            string s = symbolOutput.find(tree->token->Type)->second;
+            cout << s << " " << tree->token->Str << tree->token->lineNumber <<  endl;
         } else {
             cout << "<" << garmmerOutput.find(tree->treeType)->second << ">" << endl;
         }
@@ -92,8 +104,8 @@ void out(Tree* tree,std::ofstream &output) {
     }
     if (tree->needOut()) {
         if(tree->token != nullptr) {
-            string s = symbolOutput.find(tree->token->nodeType)->second;
-            output << s << " " << tree->token->nodeStr << endl;
+            string s = symbolOutput.find(tree->token->Type)->second;
+            output << s << " " << tree->token->Str << endl;
         } else {
             output << "<" << garmmerOutput.find(tree->treeType)->second << ">" << endl;
         }

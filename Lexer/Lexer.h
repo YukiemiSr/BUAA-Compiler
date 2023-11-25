@@ -6,10 +6,10 @@
 #define COMPILER_LEXER_H
 
 #include "string"
-#include "LexerSummary.h"
+#include "../include/LexerSummary.h"
 #include "list"
-#include "../../Parser/include/Tree.h"
-#include "../../Error/errorDeal.h"
+#include "../include/Tree.h"
+#include "../Error/errorDeal.h"
 class Lexer {
 private:
     list<string> sourceLines;

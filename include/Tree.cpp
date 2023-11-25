@@ -2,26 +2,26 @@
 // Created by Yuki_Z on 2023-10-06.
 //
 
-#include "include/Tree.h"
-#include "include/parserDefine.h"
+#include "Tree.h"
+#include "parserDefine.h"
 #include "map"
-#include "../include/Token.h"
+#include "Token.h"
 
 using namespace std;
 
 Token::Token(LexerType type, std::string &str, int num) {
     this->lineNumber = num;
-    this->nodeType = type;
-    this->nodeStr = str;
+    this->Type = type;
+    this->Str = str;
 }
 Token::Token(std::string &str) {
-    this->nodeType = ERROR;
-    this->nodeStr = str;
+    this->Type = ERROR;
+    this->Str = str;
 }
 
 Token::Token(LexerType type, string &str, int num, int printnum) {
-    this->nodeType = type;
-    this->nodeStr = str;
+    this->Type = type;
+    this->Str = str;
     this->lineNumber = num;
     this->printfNum = printnum;
 }
@@ -50,6 +50,35 @@ bool Tree::needOut() {
 }
 void Tree::setDad(Tree *dad) {
     this->father = dad;
+}
+
+vector<Tree*>* Tree::getChilds(GrammerType name) {
+    auto treeList = new vector<Tree*>();
+    for(auto iter:this->children) {
+        if(iter->treeType == name) {
+            treeList->push_back(iter);
+        }
+    }
+    return treeList;
+}
+Tree* Tree::getChild(GrammerType type) {
+    if(this->children.empty()) return nullptr;
+    for(auto iter:this->children){
+        if(iter->treeType == type) {
+            return iter;
+        }
+    }
+    return nullptr;
+}
+
+bool Tree::checkName(const string& name) {
+    if(this->children.empty()) return false;
+    for(auto iter:this->children) {
+        if(iter->token != nullptr) {
+            if(iter->token->Str == name) return true;
+        }
+    }
+   return false;
 }
 
 

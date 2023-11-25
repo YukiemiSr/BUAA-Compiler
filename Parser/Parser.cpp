@@ -1,9 +1,9 @@
 //
 // Created by Yuki_Z on 2023-09-28.
 //
-#include "include/Parser.h"
-#include "include/Tree.h"
-#include "include/parserDefine.h"
+#include "Parser.h"
+#include "../include/Tree.h"
+#include "../include/parserDefine.h"
 #include <cassert>
 #include <string>
 #include <utility>
@@ -21,8 +21,8 @@ Parser::Parser(std::ifstream &input, std::ofstream &output, SymbolTable *table, 
     finalTree = nullptr;
     curLineNumber = tokenList[0]->lineNumber;
     curTokenNumber = 0;
-    this->curType = tokenList[0]->nodeType;
-    this->curToken = tokenList[0]->nodeStr;
+    this->curType = tokenList[0]->Type;
+    this->curToken = tokenList[0]->Str;
     this->topTable = table;
     this->curTable = table;
     tableMap[1]=table;
@@ -32,8 +32,8 @@ void Parser::next() {
     if (curTokenNumber < tokenList.size()) {
         prevLineNumber = tokenList[curTokenNumber]->lineNumber;
         curTokenNumber++;
-        curToken = tokenList[curTokenNumber]->nodeStr;
-        curType = tokenList[curTokenNumber]->nodeType;
+        curToken = tokenList[curTokenNumber]->Str;
+        curType = tokenList[curTokenNumber]->Type;
         curLineNumber = tokenList[curTokenNumber]->lineNumber;
     }
 }
@@ -54,10 +54,10 @@ void Parser::parse() {
 /* CompUnit 鈫?{Decl} {FuncDef} MainFuncDef */
 Tree *Parser::parse_CompUnit() {
     Tree *tree = new Tree(nullptr, CompUnit);
-    while(tokenList[curTokenNumber+2]->nodeType != LPARENT) {
+    while(tokenList[curTokenNumber+2]->Type != LPARENT) {
         tree->addChild(parse_Decl(tree));
     }
-    while(tokenList[curTokenNumber+1]->nodeType!= MAINTK) {
+    while(tokenList[curTokenNumber+1]->Type != MAINTK) {
         tree->addChild(parse_FuncDef(tree));
     }
     tree->addChild(parse_MainFuncDef(tree));
@@ -88,6 +88,7 @@ Tree *Parser::parse_FuncDef(Tree *dad) {
     }
     else if(type == INTTK) tmp = 1;
     auto *table = new SymbolTable(++tableCnt,curTable->id,tmp);
+    curTable->childTableList.push_back(table);
     string s = "";
     if(type == INTTK) {
         s = "int";
@@ -143,7 +144,7 @@ Tree *Parser::parse_FuncFParm(Tree* dad){
     Tree *tree = new Tree(dad,FuncFParam);
     tree->addChild(parse_BType(tree));
     string  attribute = "int";
-    string name = tokenList[curTokenNumber]->nodeStr;
+    string name = tokenList[curTokenNumber]->Str;
     int line = curLineNumber;
     tree->addChild(initLeaf(tree,Ident));
     int depth = 0;
@@ -183,6 +184,7 @@ Tree *Parser::parse_MainFuncDef(Tree *dad) {
         tree->addChild(ErrorLeaf(")",tree));
     }
     auto* symbolTable = new SymbolTable(++this->tableCnt,curTable->id,1);
+    curTable->childTableList.push_back(symbolTable);
     tableMap[this->tableCnt]=symbolTable;
     curTable = symbolTable;
     tree->addChild(parse_Block(tree));
@@ -235,7 +237,7 @@ Tree *Parser::parse_PrimaryExp(Tree *dad) {
 }
 /* FuncRParams 鈫?Exp { ',' Exp } */
 Tree *Parser::parse_FuncRParams(Tree *dad,string name) {
-    Tree* tree = new Tree(dad,Number);
+    Tree* tree = new Tree(dad,FuncRParams);
     int line = curLineNumber;
     vector<int> prarms;
     tree->addChild(parse_Exp(tree));
@@ -250,12 +252,12 @@ Tree *Parser::parse_FuncRParams(Tree *dad,string name) {
         cnt++;
     }
     auto* item = funcNumError(name,line,cnt);
-    if(item != nullptr){}
-    else  FuncTypeError(prarms,line,name);
+    if(item == nullptr){FuncTypeError(prarms,line,name);}
     return tree;
 }
 
 Tree *Parser::parse_Number(Tree *dad) {
+
     Tree* tree = new Tree(dad,Number);
     tree->addChild(initLeaf(tree));
     return tree;
@@ -264,7 +266,7 @@ Tree *Parser::parse_Number(Tree *dad) {
 Tree *Parser::parse_UnaryExp(Tree *dad) { //c d e j PrimaryExp | Ident '(' [FuncRParams] ')'
     Tree *tree = new Tree(dad, UnaryExp);
     // Ident '(' [FuncRParams] ')'
-    if (curType == IDENFR && tokenList[curTokenNumber + 1]->nodeType == LPARENT) {
+    if (curType == IDENFR && tokenList[curTokenNumber + 1]->Type == LPARENT) {
         // Ident '(' [FuncRParams] ')'
         auto* tmp =undefineIndent(curToken,curLineNumber);
         if(tmp != nullptr) dealError->addError(tmp);
@@ -403,7 +405,7 @@ Tree *Parser::parse_Block(Tree *dad) {
     int type = judgeReturn(begin,end);
     int pos = -1;
     for(int i = begin;i <= end;i++) {
-        if(tokenList[i]->nodeType==RETURNTK) {
+        if(tokenList[i]->Type == RETURNTK) {
             pos = tokenList[i]->lineNumber;
         }
     }
@@ -423,7 +425,7 @@ Tree *Parser::parse_Block(Tree *dad) {
 int Parser::judgeReturn(int begin,int end){
     int sym1 = 0;
     for(int i = begin;i <= end;i++) {
-        if(tokenList[i]->nodeType==RETURNTK) {
+        if(tokenList[i]->Type == RETURNTK) {
             sym1 = 1;
         }
     }
@@ -617,6 +619,7 @@ Tree *Parser::parse_Stmt(Tree *dad) {
     }
     else if(curType == LBRACE) {//block
         auto* symbolTable = new SymbolTable(++tableCnt,curTable->id,0);
+        curTable->childTableList.push_back(symbolTable);
         tableMap[tableCnt]=symbolTable;
         curTable = symbolTable;
         tree->addChild(parse_Block(tree));
@@ -625,17 +628,17 @@ Tree *Parser::parse_Stmt(Tree *dad) {
         tree->addChild(initLeaf(tree,leaf));
     }
     else if(curType == LPARENT || curType == INTCON
-            ||(curType == IDENFR && tokenList[curTokenNumber+1]->nodeType == LPARENT)
+            ||(curType == IDENFR && tokenList[curTokenNumber+1]->Type == LPARENT)
             ||(curType == NOT || curType == PLUS || curType == MINU)) {//exp
         tree->addChild(parse_Exp(tree));
         tree->addChild(initLeaf(tree,leaf));
     }
     else {//宸﹀€兼儏鍐?
         int tmp = curTokenNumber;
-        while(tokenList[tmp]->nodeType != ASSIGN && tokenList[tmp]->nodeType != SEMICN) {//=鍜?璋佸厛鍑虹幇
+        while(tokenList[tmp]->Type != ASSIGN && tokenList[tmp]->Type != SEMICN) {//=鍜?璋佸厛鍑虹幇
             tmp++;
         }
-        if(tokenList[tmp]->nodeType == ASSIGN) {//涓嬩竴涓负=锛屽垯涓€瀹氭槸Lval h i
+        if(tokenList[tmp]->Type == ASSIGN) {//涓嬩竴涓负=锛屽垯涓€瀹氭槸Lval h i
             auto* item1 = undefineIndent(curToken,curLineNumber);
             if(item1 == nullptr) { //鍙互鎵惧埌
                 auto* item = changeConst(curToken,curLineNumber);

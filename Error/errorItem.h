@@ -4,7 +4,7 @@
 
 #ifndef COMPILER_ERRORITEM_H
 #define COMPILER_ERRORITEM_H
-#include "../Lexer/include/LexerSummary.h"
+#include "../include/LexerSummary.h"
 #include "map"
 using namespace std;
 enum errorType {

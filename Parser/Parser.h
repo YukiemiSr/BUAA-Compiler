@@ -5,11 +5,11 @@
 #ifndef COMPILER_PARSER_H
 #define COMPILER_PARSER_H
 
-#include "../../Lexer/include/Lexer.h"
+#include "../Lexer/Lexer.h"
 #include "vector"
-#include "Tree.h"
-#include "../../SymbolTable/Symbol.h"
-#include "../../SymbolTable/SymbolTable.h"
+#include "../include/Tree.h"
+#include "../include/Symbol.h"
+#include "../include/SymbolTable.h"
 #include "string"
 using namespace std;
 class Parser {
@@ -20,18 +20,18 @@ private:
     int curLineNumber;
     LexerType curType = ELSE;
     string curToken;
-    SymbolTable *topTable;
     SymbolTable *curTable;
-    map<int, SymbolTable*> tableMap;
     int prevLineNumber;
     int tableCnt = 1;
     int depth = 0;//辅助左值分析
     int funcDepth = 0;//FuncType辅助分析
     int forNumber = 0;//循环块辅助分析
 public:
+    map<int, SymbolTable*> tableMap;
     Tree *finalTree;
     dealError *dealError;
     vector<errorItem*> errorList;
+    SymbolTable *topTable;
 private:
     void FuncTypeError(vector<int> prarms, int lineNumber, string name);
     Tree *ErrorLeaf(string str,Tree* dad);

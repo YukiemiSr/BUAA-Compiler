@@ -132,5 +132,4 @@ const map<LexerType, string> symbolOutput{
         {LBRACE,     "LBRACE"},
         {RBRACE,     "RBRACE"}
 };
-
 #endif //COMPILER_LEXERSUMMARY_H

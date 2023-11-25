@@ -4,13 +4,13 @@
 
 #ifndef COMPILER_TOKEN_H
 #define COMPILER_TOKEN_H
-#include "../Lexer/include/LexerSummary.h"
+#include "LexerSummary.h"
 struct Token {
     Token(LexerType type, std::string &str, int num);
-    Token(std::string &str);
+    explicit Token(std::string &str);
     Token(LexerType type, std::string &str, int num,int printnum);
-    LexerType nodeType;
-    std::string nodeStr;
+    LexerType Type;
+    std::string Str;
     int lineNumber;
     int printfNum;
 };
