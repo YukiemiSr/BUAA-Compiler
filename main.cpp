@@ -4,8 +4,8 @@
 #include "include/SymbolTable.h"
 #include <algorithm>
 #include "Error/errorItem.h"
-#include "LLVM/printIR.h"
-#include "LLVM/llvmIR.h"
+#include "llvm/printIR.h"
+#include "llvm/llvmIR.h"
 using namespace std;
 void ErrorOutPut(std::ofstream &output,vector<errorItem*> errorList);
 void out(Tree* tree,std::ofstream &output);

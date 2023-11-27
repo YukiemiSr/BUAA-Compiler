@@ -97,6 +97,7 @@ string switchLexer(LexerType type) {
     if(type == DIV) return "sdiv";
     if(type == OR) return "or";
     if(type == AND) return "and";
+    if(type == MOD) return "srem";
     else return "";
 }
 

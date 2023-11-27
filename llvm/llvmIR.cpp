@@ -2,8 +2,9 @@
 // Created by Yuki_Z on 2023-11-20.
 //
 #include "llvmIR.h"
-int mainId = -1;
+int mainId = 0;
 void calRegister(Register* left,Register* right,Register* ans,LexerType type) {//左右均可用于计算
+    if(mainId == 0) {
         int l = left->value;
         int r = right->value;
         ans->isValue = true;
@@ -22,6 +23,8 @@ void calRegister(Register* left,Register* right,Register* ans,LexerType type) {/
         if(type == MOD) {
             ans->value = l % r;
         }
+    }
+
 }
 void generate_CompUnit(Tree* dad) {
     init();
@@ -32,6 +35,7 @@ void generate_CompUnit(Tree* dad) {
             generate_Decl(item);
         }
     }
+    mainId = -1;
     if(dad->getChild(FuncDef) != nullptr) {
         auto* childs = dad->getChilds(FuncDef);
         for(auto item:*childs) {
@@ -234,10 +238,11 @@ void generate_Stmt(Tree* dad) {
         line = line.substr(1,cc-2);
         for(int i = 0,j = 0;i < line.size(); i++) {
             if(line[i] == '%' && line[i+1] == 'd') {
-                string ans = "  call void @putch(i32 ";
+                string ans = "  call void @putint(i32 ";
                 ans += expName[j++];ans += ")";
                 print(ans);
                 if(i == line.size() - 2) break;
+                i++;
             }else {
                 string ans = "  call void @putch(i32 ";
                 int c = (int)line[i];
