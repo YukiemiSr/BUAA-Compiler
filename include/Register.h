@@ -13,6 +13,9 @@ public:
     bool isValue = false;//可以用于计算
     int type;//函数的用法 0:void,1:int
     int tableId;
+    int label1;
+    int curLineNumber;
+    int length = 32;//是i32还是i1
     std::string name;
     Register(int id1,int i);
     Register(int i);

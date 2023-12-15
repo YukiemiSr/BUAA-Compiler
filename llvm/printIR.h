@@ -22,5 +22,13 @@ void printStore(Register* left,Register* right);
 void printAlloca(int regCnt);
 void printGetint(Register* reg);
 void printCallFunc(Register* type,vector<Register*> regList);
+void printLogic(Register* ans,Register* left,Register* right,string s);
+void printBr(Register* ans,Register* label1,Register* label2,int i);
+void finalPrint();
+int getCurLineNumber();
+void insertLine(int l,string s);
+void printIcmp(Register* ans,Register* left,Register* right,string type);
 string switchLexer(LexerType type);
+void printZext(Register* ans,Register* initial);
+void printTrunc(Register* ans,Register* initial);
 #endif //COMPILER_PRINTIR_H

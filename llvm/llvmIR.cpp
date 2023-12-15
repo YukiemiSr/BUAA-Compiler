@@ -3,6 +3,15 @@
 //
 #include "llvmIR.h"
 int mainId = 0;
+int condCnt = 0;
+int reWriteCnt = 0;
+extern vector<string> output;
+vector<int> basicList;
+map<int,vector<ReStruct>> reWriteList;//需要回填的列表,key为当前第几个cond
+map<int,int> beforeBlock;//当前第几个block前面需要回填的编号
+map<int,int> reWriteIdList;//回填编号对应的寄存器编号
+map<int,int> nextWriteIdList;
+int status = 0;//0:正常 1:continue 2:break
 void calRegister(Register* left,Register* right,Register* ans,LexerType type) {//左右均可用于计算
     if(mainId == 0) {
         int l = left->value;
@@ -22,6 +31,31 @@ void calRegister(Register* left,Register* right,Register* ans,LexerType type) {/
         }
         if(type == MOD) {
             ans->value = l % r;
+        }
+        if(type == AND) {
+            ans->value = l && r;
+        }
+        if(type == OR) {
+            ans->value = l || r;
+        }
+        if(type == LSS) {
+            if(l < r) ans->value = 1;
+            else ans->value = 0;
+        }
+        if(type == LEQ) {
+            ans->value =(l <= r)? 1:0;
+        }
+        if(type == GRE) {
+            ans->value = (l > r)? 1: 0;
+        }
+        if(type == GEQ) {
+            ans->value = (l >= r)? 1: 0;
+        }
+        if(type == NEQ) {
+            ans->value = (l != r)? 1: 0;
+        }
+        if(type == EQL) {
+            ans->value = (l == r)? 1: 0;
         }
     }
 
@@ -165,6 +199,11 @@ Register* generate_InitVal(Tree* dad) {
 void generate_MainFuncDef(Tree* dad) {
     vector<Register*> regList;
     printFuncDef(1,"main",regList);
+    curTable->regCnt = -1;
+    auto block = allocRegister();
+    basicList.push_back(block->id);
+    string l = to_string(block->id) + ":";
+    print(l);
     generate_Block(dad->getChild(Block));
     print("}");
 }
@@ -226,7 +265,8 @@ void generate_Stmt(Tree* dad) {
         }else {
             print("  ret void");
         }
-    }else if(dad->foundString("printf")) {//printf的情况
+    }
+    else if(dad->foundString("printf")) {//printf的情况
         auto childs = dad->getChilds(Exp);
         vector<Tree*> s = *childs;
         vector<string> expName;
@@ -279,6 +319,246 @@ void generate_Stmt(Tree* dad) {
         switchTable(cur);
         curTable->regCnt = n;
     }
+    else if(dad->getChild(Cond) != nullptr && dad->childNumber() < 5) {
+        //if情况
+        auto stmtList = *dad->getChilds(Stmt);
+        condCnt++;
+        generate_Cond(dad->getChild(Cond));//判断的情况
+        //cond是都要跑的
+        if(dad->foundString("else")) { //存在else的情况
+            generate_Stmt(stmtList[0]);//stmt1
+            int k1 = getCurLineNumber();//label1结尾的位置
+            auto block2Reg = allocRegister();
+            reWrite(block2Reg->id);
+            basicList.push_back(block2Reg->id);
+            string s1; s1 += to_string(block2Reg->id);
+            print(s1+":");//stmt块
+            generate_Stmt(stmtList[1]);//label2结尾的位置
+            auto basic = allocRegister();
+            ReWriteLor(basic->id);
+            string l = "  br label " + basic->printRegister();
+            print(l);
+            print(to_string(basic->id) + ":");//
+            int cnt = reWriteList[condCnt].size();
+            {
+                string l = "  br label " + basic->printRegister();
+                insertLine(k1 + cnt,l);
+            }
+        }
+        else {
+            generate_Stmt(stmtList[0]);
+            auto basic = allocRegister();
+            reWrite(basic->id);
+            ReWriteLor(basic->id);
+            string tmp = "  br label %" + to_string(basic->id);
+            insertLine(getCurLineNumber(),tmp);
+            print(to_string(basic->id) + ":");//基本块的标号开始
+        }
+    }
+    else if(dad->getChild(Cond) != nullptr && dad->childNumber() >= 5) {
+        vector<Tree*>* forStmtList = dad->getChilds(ForStmt);
+       if(forStmtList != nullptr) {//forStmt1
+           auto x = *forStmtList;
+           generate_ForStmt(x[0]);
+       }
+       int condId;
+       Register* condLeft = nullptr;
+       if(dad->getChild(Cond) != nullptr) {
+           auto block = allocRegister();//分配Cond的基本快
+           print(to_string(block->id) + ":");
+           condId = block->id;
+           condLeft = generate_Cond(dad->getChild(Cond));
+           printBrLabel(block->id);
+       }
+       int stmtId = curTable->regCnt ;
+       generate_Stmt(dad->getChild(Stmt));
+       int forStmt2Id;
+       if(forStmtList->size() == 2) {
+           auto x = *forStmtList;
+           auto forStmt2Block = allocRegister();
+           forStmt2Id = forStmt2Block->id;
+           print(to_string(forStmt2Block->id) + ":");
+           generate_ForStmt(x[1]);
+           if(dad->getChild(Cond) != nullptr) {
+               print("  br label %" + to_string(condId));
+           }else {
+               print("  br label %" + to_string(stmtId));
+           }
+           printBrLabel(forStmt2Block->id);
+       }
+       auto basicBlock = allocRegister();
+       int basicId = basicBlock->id;
+       print(to_string(basicBlock->id) + ":");
+       if(dad->getChild(Cond) != nullptr)
+           ReWriteLoad(basicId,condLeft->id,stmtId);
+       if(forStmtList->size() < 2) {
+           if(dad->getChild(Cond) != nullptr) {
+               dealCirculation(condId,basicId);
+               printBrLabel(condId);
+           }else {
+               dealCirculation(stmtId,basicId);
+               printBrLabel(basicId);
+           }
+       }else {
+           dealCirculation(forStmt2Id,basicId);
+       }
+    }
+    else if(dad->checkName("break")) {
+        print("  br label break");
+    }
+    else if(dad->checkName("continue")) {
+        print("  br label continue");
+    }
+}
+void generate_ForStmt(Tree* dad) {// LVal '=' Exp
+    auto left = generate_LValLeft(dad->getChild(LVal));
+    Register* right = generate_Exp(dad->getChild(Exp));
+    printStore(left,right);
+    left->value = right->value;
+}
+Register* generate_Cond(Tree* dad) {
+    return generate_LOrExp(dad->getChild(LOrExp));
+}
+void getAndExp(vector<Tree*>* treeList,Tree* dad) {
+    if(dad->childNumber() > 1) {
+        getAndExp(treeList,dad->getChild(0));
+        treeList->push_back(dad->getChild(2));
+    }else {
+        treeList->push_back(dad->getChild(0));
+    }
+}
+void getEqExp(vector<Tree*>* treeList,Tree* dad) {
+    if(dad->childNumber() > 1) {
+        getEqExp(treeList,dad->getChild(0));
+        treeList->push_back(dad->getChild(2));
+    }else {
+        treeList->push_back(dad->getChild(0));
+    }
+}
+Register* generate_LOrExp(Tree* dad) {//LAndExp | LOrExp '||' LAndExp
+    vector<Tree*> treeList;
+    vector<Register*> regs;
+    vector<int> idList;
+    int end;
+    Register* ans = nullptr;
+    getAndExp(&treeList,dad);
+    for(auto item:treeList) {
+        auto left= generate_LAndExp(item);
+        auto tmp = allocRegister();//下一个块的id
+        beforeBlock[tmp->id] = ++reWriteCnt;
+        reWriteIdList[reWriteCnt] = left->id;
+        print(to_string(tmp->id) + ":");
+        end = tmp->id;
+        ans = left;
+    }
+    int cnt = 0;
+    for(auto x:reWriteIdList) {
+        cnt++;
+        if(cnt == reWriteIdList.size()) {
+            nextWriteIdList[x.second] =-1;
+        }else {
+           nextWriteIdList[x.second] = end;
+        }
+    }
+    return ans;
+}
+Register* generate_LAndExp(Tree* dad) {
+    vector<Tree*> treeList;
+    getEqExp(&treeList,dad);
+    int cnt = 0;
+    int tmpId;
+    vector<Register*> tmpRegs;
+    Register* ans = nullptr;
+    for(auto item:treeList) {
+        if(treeList.size() > 1) {
+            auto left = generate_EqExp(item);
+            if(left->length == 32) {
+                auto left_i1 = allocRegister();
+                printTrunc(left_i1,left);
+                left = left_i1;
+                left->length = 1;
+            }
+            tmpId = left->id;
+            if(cnt == 0) ans = left;
+            if(cnt > 0) calRegister(ans,left,ans,AND);
+            if(cnt < treeList.size() - 1) {
+                auto tmp = allocRegister();//下一个块的id,最底层,在这里进行br的填写
+                tmpRegs.push_back(left);
+                left->label1 = tmp->id;
+                left->curLineNumber = getCurLineNumber();
+                print(to_string(tmp->id) + ":");
+            }
+            cnt++;
+        }else {
+            auto left = generate_EqExp(item);
+            if(left->length == 32) {
+                auto left_i1 = allocRegister();
+                printTrunc(left_i1,left);
+                left = left_i1;
+                left->length = 1;
+            }
+            return left;
+        }
+    }
+    for(auto item:tmpRegs) {
+        reWriteList[condCnt].push_back(ReStruct{item->id,item->label1,item->curLineNumber,item->value,"and",curTable->regCnt+1});
+    }
+    ans->id = tmpId;
+    return ans;
+}
+Register* generate_EqExp(Tree* dad) {
+    if(dad->childNumber() != 1) {//EqExp → RelExp | EqExp  ('==' | '!=') RelExp
+        auto left = generate_EqExp(dad->getChild(0));
+        auto right = generate_RelExp(dad->getChild(2));
+        LexerType type = dad->getChild(1)->token->Type;
+        string s = dad->getChild(1)->token->Str;
+        if(left->length == 1) {
+            auto left_i1 = allocRegister();
+            printZext(left_i1,left);
+            left->id = left_i1->id;
+            left = left_i1;
+        }
+        if(right->length == 1) {
+            auto right_i1 = allocRegister();
+            printZext(right_i1,right);
+            right->id = right_i1->id;
+            right = right_i1;
+        }
+        auto ans = allocRegister();
+        calRegister(left,right,ans,type);
+        printIcmp(ans,left,right,s);
+        return ans;
+    }else {
+        auto left = generate_RelExp(dad->getChild(0));
+        if(left->length == 1) {
+            auto left_i1 = allocRegister();
+            printZext(left_i1,left);
+            left->id = left_i1->id;
+            left = left_i1;
+        }
+        return left;
+    }
+}
+Register* generate_RelExp(Tree* dad) {
+    if(dad->childNumber() != 1) {//RelExp  → AddExp | RelExp ('<' | '>' | '<=' | '>=') AddExp
+        auto left = generate_RelExp(dad->getChild(0));
+        auto right = generate_AddExp(dad->getChild(2));
+        if(right->length == 1) {
+            auto right_i1 = allocRegister();
+            printZext(right_i1,right);
+            right->id = right_i1->id;
+            right = right_i1;
+        }
+        string s = dad->getChild(1)->token->Str;
+        LexerType type = dad->getChild(1)->token->Type;
+        auto ans = allocRegister();
+        calRegister(left,right,ans,type);
+        printIcmp(ans, left, right, s);
+        return ans;
+    }else {
+        auto left = generate_AddExp(dad->getChild(0));
+        return left;
+    }
 }
 Register* generate_LVal(Tree* dad) {//只有在Stmt里面才有
     string name = dad->getChild(0)->token->Str;
@@ -286,7 +566,6 @@ Register* generate_LVal(Tree* dad) {//只有在Stmt里面才有
     Register* newReg = createRegister(name);
     if(item != nullptr) {//找到了
         printLoadAlloc(newReg,item);
-
         newReg->value = item->value;
     }
     return newReg;
@@ -408,4 +687,146 @@ Register* generate_Number(Tree* dad) {
     string s =  dad->getChild(leaf)->token->Str;
     auto item = createRegister(stoi(s));
     return item;
+}
+void reWrite(int p) {
+    int cur = 0;
+    for(auto s : reWriteList[condCnt]) {
+        if(s.ans == -1) {//当前是一个数
+            string l;
+            if(s.type == "or") {
+                if(s.value == 1) {
+                    if(s.end != -1) {
+                        l = l + "  "+ "br label %" + to_string(s.end);
+                    }
+                   else  l = l + "  "+ "br label %" + to_string(p);
+                }else {
+                    l = l + "  "+ "br label %" + to_string(s.label1);
+                }
+            }else if(s.type == "and") {
+                if(s.value == 0) {
+                    if(s.end != -1) {
+                        l = l + "  "+ "br label %" + to_string(s.end);
+                    }
+                    else l = l + "  "+ "br label %" + to_string(p);
+                }else {
+                    l = l + "  "+ "br label %" + to_string(s.label1);
+                }
+            }
+            insertLine(s.pos + cur,l);
+        }
+        else {
+            if(s.type == "or") {
+                string l;
+                l = l +"  "+ "br i1 %"+ to_string(s.ans) + ", ";
+                l = l + "label %"+ to_string(s.label1) + ", ";
+                if(s.end != -1)  l = l + "label %" + to_string(s.end);//是1的话直接跳转到stmt
+                else l = l + "label %" + to_string(p);
+                insertLine(s.pos + cur,l);
+            }else {
+                string l;
+                l = l +"  "+ "br i1 %"+ to_string(s.ans) + ", ";
+                l = l + "label %"+ to_string(s.label1) + ", ";
+                if(s.end != -1)  l = l + "label %" + to_string(s.end);//是0的话直接跳转到p
+                else l = l + "label %" + to_string(p);
+                insertLine(s.pos + cur,l);
+            }
+        }
+        cur++;
+    }
+}
+void ReWriteLor(int basicBlock) {
+    std::vector<std::string> updatedOutput; // 存储更新后的字符串列表
+    for (std::string item : output) {
+        if (item[item.size() - 1] == ':') {
+            std::stringstream ss(item);
+            int number;
+            ss >> number; // 提取block数字
+            if (beforeBlock.count(number) != 0) {
+                int calcReg = reWriteIdList[beforeBlock[number]];
+                std::string l;
+                l = l + "  br i1 %" + to_string(calcReg) + ", label ";
+                if(nextWriteIdList[reWriteIdList[beforeBlock[number]]] != -1) {
+                    l = l + "%" + to_string(number) + ", label %" + to_string(nextWriteIdList[reWriteIdList[beforeBlock[number]]]);
+                }else {
+                    l = l + "%" + to_string(number) + ", label %" + to_string(basicBlock);
+                }
+                updatedOutput.push_back(l); // 将新字符串插入到updatedOutput中
+            }
+        }
+        updatedOutput.push_back(item); // 将原始字符串插入到updatedOutput中
+    }
+    output = updatedOutput; // 更新output为更新后的字符串列表
+}
+void ReWriteLoad(int BlockRegId,int leftRegId,int nextBlockId) {
+    string l = "  ";
+    l = l + "br i1 %" + to_string(leftRegId);
+    l = l + ", label %"+ to_string(nextBlockId);
+    l = l + ", label %" + to_string(BlockRegId);
+    std::vector<std::string> updatedOutput; // 存储更新后的字符串列表
+    for (std::string item : output) {
+        if (item[item.size() - 1] == ':') {
+            std::stringstream ss(item);
+            int number;
+            ss >> number; // 提取block数字
+            if(number == nextBlockId) {
+                updatedOutput.push_back(l); // 将新字符串插入到updatedOutput中
+            }
+        }
+        updatedOutput.push_back(item); // 将原始字符串插入到updatedOutput中
+    }
+    output = updatedOutput; // 更新output为更新后的字符串列表
+}
+void printBrLabel(int nextBlockId) {
+    string l = "  ";
+    l = l + "br label %" + to_string(nextBlockId);
+    std::vector<std::string> updatedOutput; // 存储更新后的字符串列表
+    for (std::string item : output) {
+        if (item[item.size() - 1] == ':') {
+            std::stringstream ss(item);
+            int number;
+            ss >> number; // 提取block数字
+            if(number == nextBlockId) {
+                updatedOutput.push_back(l); // 将新字符串插入到updatedOutput中
+            }
+        }
+        updatedOutput.push_back(item); // 将原始字符串插入到updatedOutput中
+    }
+    output = updatedOutput; // 更新output为更新后的字符串列表
+}
+std::string replaceKeywords(const std::string& input,string l,string type) {
+    std::string result = input;
+    if(type == "continue") {
+        size_t continuePos = result.find("continue");
+        while (continuePos != std::string::npos) {
+            result.replace(continuePos, 8, l); // 8 是 "continue" 的长度
+            continuePos = result.find("continue");
+        }
+    }
+    else if(type == "break") {
+        size_t breakPos = result.find("break");
+        while (breakPos != std::string::npos) {
+            result.replace(breakPos, 5, l); // 5 是 "break" 的长度
+            breakPos = result.find("break");
+        }
+    }
+    return result;
+}
+void dealCirculation(int continueToId,int breakToId) {
+    std::vector<std::string> updatedOutput; // 存储更新后的字符串列表
+    string l1 = to_string(continueToId);
+    l1 = "%" + l1;
+    string l2 = to_string(breakToId);
+    l2 = "%" + l2;
+    for(std::string item:output) {
+        if(item.find("continue") != -1) {
+            string s = replaceKeywords(item,l1,"continue");
+            updatedOutput.push_back(s);
+        }else if(item.find("break") != -1) {
+            string s = replaceKeywords(item,l2,"break");
+            updatedOutput.push_back(s);
+        }else {
+            updatedOutput.push_back(item);
+        }
+    }
+    output = updatedOutput;
 }

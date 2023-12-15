@@ -16,6 +16,7 @@ public:
     int regCnt = 0;
     int tableCnt = 0;//目前第几个table;
     int curDef = 0;//目前第几个def
+    int curJump = -1;//跳转的基本块标号
     std::map<std::string,Symbol*> directory;
     std::vector<SymbolTable*> childTableList;
     std::map<string,vector<Symbol*>> funcMap;
