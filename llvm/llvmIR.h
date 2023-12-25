@@ -8,7 +8,9 @@
 #include "printIR.h"
 #include <algorithm>
 #include <sstream>
-void ReWriteLor(int basicBlock);
+#include <regex>
+void reWriteLastLAnd(int blockId,int condId);
+void ReWriteLor(int basicBlock,int condId);
 void generate_CompUnit(Tree* dad);
 void generate_MainFuncDef(Tree* dad);
 void generate_Block(Tree* dad);
@@ -20,11 +22,12 @@ void generate_VarDecl(Tree* dad);
 void generate_VarDef(Tree* dad);
 void generate_ConstDef(Tree* dad);
 void generate_FuncDef(Tree* dad);
-void generate_FuncFParams(Tree* dad,string name,int type);
-void preFuncBlock(string name);
+void generate_FuncFParams(Tree* dad,const string& name,int type);
+void preFuncBlock(const string& name);
 void copyRegister(Register* left, Register* right);
+void dealMoreBlock();
 void generate_ForStmt(Tree* dad);
-void reWrite(int condCnt);
+void reWrite(int condCnt,int condId);
 void printBrLabel(int nextBlockId);
 void ReWriteLoad(int BlockRegId,int leftRegId,int nextBlockId);
 void dealCirculation(int continueToId,int breakToId);
@@ -33,13 +36,13 @@ LexerType generate_UnaryOp(Tree* dad);
 
 Register* generate_Cond(Tree* dad);
 Register* generate_LOrExp(Tree* dad);
-Register* generate_LAndExp(Tree* dad);
+Register* generate_LAndExp(Tree* dad,bool isover);
 Register* generate_EqExp(Tree* dad);
 Register* generate_RelExp(Tree* dad);
-Register* generate_FuncFParam(Tree* dad,string name);
-Register* generate_InitVal(Tree* dad);
+Register* generate_FuncFParam(Tree* dad,const string& name);
+Register* generate_InitVal(Tree* dad,const string& exist);
 Register* generate_ConstExp(Tree* dad);
-Register* generate_ConstInitVal(Tree* dad);
+Register* generate_ConstInitVal(Tree* dad,const string& exist);
 Register* generate_Exp(Tree* dad);
 Register* generate_AddExp(Tree* dad);
 Register* generate_MulExp(Tree* dad);

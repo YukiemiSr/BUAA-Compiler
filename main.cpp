@@ -6,6 +6,10 @@
 #include "Error/errorItem.h"
 #include "llvm/printIR.h"
 #include "llvm/llvmIR.h"
+#define ERROR
+//llvm-link main.ll lib.ll -S -o out.ll
+//clang -S -emit-llvm main.c -o main.ll
+//lli out.ll
 using namespace std;
 void ErrorOutPut(std::ofstream &output,vector<errorItem*> errorList);
 void out(Tree* tree,std::ofstream &output);
@@ -42,14 +46,18 @@ int main() {
     totalTable = parser.topTable;
     curTable = totalTable;
     tableMap = parser.tableMap;
+    if(!parser.dealError->errorList.empty()) {
+        ErrorOutPut(errorOut,parser.dealError->errorList);
+        return 1;
+    }
 #ifdef LLVM_generate
     generate_CompUnit(parser.finalTree);
+    finalPrint();
 #endif
     input.close();
     output.close();
-    //errorOut.close();
+    errorOut.close();
 }
-
 
 #ifdef ERROR
 
@@ -65,7 +73,6 @@ static bool compareErrorItems(const errorItem* item1, const errorItem* item2) {
 }
 
 void ErrorOutPut(std::ofstream &output,vector<errorItem*> errorList) {
-
     sort(errorList.begin(),errorList.end(),compareErrorItems);
     for(errorItem* item: errorList) {
         errorType c = item->type;

@@ -18,6 +18,8 @@ public:
     int regId = -1;
     string attribute;
     Register* reg = nullptr;
+    int secondDimLength = 0;
+    int firstDimLength = 0;
     Symbol(string &string1,int type1, int depth1,string attribute1,int line) {
         this->type = type1;
         this->depth = depth1;

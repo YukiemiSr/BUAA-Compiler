@@ -118,7 +118,7 @@ string getRegisterDimStr(string name,int cnt,int mainId) {
                      ", i32 0, i32 " + to_string(dim1) + ", i32 " + to_string(dim2);
                 return l1;
             }
-        }
+        }return "";
 }
 string getRegisterDimLvalLeftStr(string name,Register* reg1,Register *reg2,Register* reg,int mainId,int curDim) {
     auto sym = findSymbol(name);
@@ -170,14 +170,14 @@ string getRegisterDimLvalLeftStr(string name,Register* reg1,Register *reg2,Regis
             }
         }
 
-    }
+    }return "";
 }
 string getRegisterDimLvalStr(string name,Register* reg1,Register* reg2,Register* reg,int mainId,int curDim) {
     auto sym = findSymbol(name);
     pair<string,Symbol*> item(sym->str,sym);
     if(item.first == name) {
         int dim = item.second->depth;
-        if(true)  {
+        if(mainId != -1)  {
             if(dim == 1) {
                 string l;
                 if(curDim == 0) {
@@ -237,8 +237,7 @@ string getRegisterDimLvalStr(string name,Register* reg1,Register* reg2,Register*
                 return l;
             }
         }
-
-    }
+    }return "";
 }
 
 

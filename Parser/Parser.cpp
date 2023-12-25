@@ -120,6 +120,7 @@ Tree *Parser::parse_FuncDef(Tree *dad) {
         auto* item = tableMap[curTable->fatherId]->addSymbol(name,sym,lineNumber);//鍔犲埌鐖剁鍙疯〃涓?
         if(item != nullptr) dealError->addError(item);
     }
+    curTable->ss = 1;
     tree->addChild(parse_Block( tree));
     return tree;
 }
@@ -409,17 +410,17 @@ Tree *Parser::parse_Block(Tree *dad) {
             pos = tokenList[i]->lineNumber;
         }
     }
-    if(type == 0){//娌℃湁return
-        if(curTable->type == 1 || curTable->type == 4) {//褰撳墠鏄痠nt绫诲瀷
+    if(type == 0){//没有return
+        if(curTable->type == 1 || curTable->type == 4) {
             dealError->g_LackReturn(tokenList[end]->lineNumber);
         }
     }
-    else{//鏈塺eturn
+    else if(type == 2){
         if(curTable->type == 2) {
             dealError->f_ReturnUnMatch(pos);
         }
     }
-    curTable = tableMap[curTable->fatherId];//杩斿洖鍘熺鍙疯〃
+    curTable = tableMap[curTable->fatherId];
     return tree;
 }
 int Parser::judgeReturn(int begin,int end){
@@ -427,6 +428,10 @@ int Parser::judgeReturn(int begin,int end){
     for(int i = begin;i <= end;i++) {
         if(tokenList[i]->Type == RETURNTK) {
             sym1 = 1;
+            if(tokenList[i+1]->Type != SEMICN) {
+                sym1 = 2;
+                break;
+            }
         }
     }
     return sym1;

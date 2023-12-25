@@ -19,5 +19,6 @@ add_executable(Compiler main.cpp Lexer/Lexer.cpp Lexer/Lexer.h include/LexerSumm
         include/Register.h
         utils.cpp
         utils.h
+
 )
 SET(CMAKE_BUILD_TYPE Debug)

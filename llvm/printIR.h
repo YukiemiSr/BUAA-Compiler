@@ -12,6 +12,7 @@ using namespace std;
 #define COMPILER_PRINTIR_H
 extern ofstream fll;
 void init();
+void printGlobal(const string &str);
 void print(const string& str);
 void printFuncDef(int type,const string& name,vector<Register*> regList);
 void printReturn(int type,Register* reg);
@@ -31,4 +32,7 @@ void printIcmp(Register* ans,Register* left,Register* right,string type);
 string switchLexer(LexerType type);
 void printZext(Register* ans,Register* initial);
 void printTrunc(Register* ans,Register* initial);
+void printAllocaDims(int regCnt,Symbol* sym);
+void printStoreDims(int regCnt,Symbol* sym);
+void printLoadAllocDims(int regCnt,Symbol* sym);
 #endif //COMPILER_PRINTIR_H
