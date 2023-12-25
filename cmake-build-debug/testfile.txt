@@ -1,0 +1,4 @@
+int main() {
+    printf("as/*d*");
+    int a //= 5;
+ }

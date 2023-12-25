@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="Compiler" targetName="Compiler" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" GENERATION_OPTIONS="-D CMAKE_C_COMPILER= D:\LLVM\bin\clang.exe -D CMAKE_CXX_COMPILER= D:\LLVM\bin\clang++.exe" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c813e839-b859-423c-930f-8ecad12d5189" name="Default Changelist" comment="Default Changelist">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-ab1fae7fb8b9c3d7889a.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/index-2023-10-13T16-34-44-0990.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/target-Compiler-Debug-def27481655e8eae7d17.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.15.3/CMakeDetermineCompilerABI_C.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.15.3/CMakeDetermineCompilerABI_C.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.15.3/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.15.3/CMakeDetermineCompilerABI_CXX.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.15.3/CompilerIdC/a.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.15.3/CompilerIdC/a.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.15.3/CompilerIdCXX/a.exe" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/3.15.3/CompilerIdCXX/a.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Compiler.dir/CXX.includecache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Compiler.dir/Lexer.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Compiler.dir/Parser.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Compiler.dir/Tree.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Compiler.dir/depend.internal" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Compiler.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Compiler.dir/depend.make" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Compiler.dir/main.cpp.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Compiler.dir/objects.a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Compiler.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Compiler.cbp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="hiddenUrls">
+      <set>
+        <option value="git@github.com:YukiemiSr/BUAA-Compiler.git" />
+      </set>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2VI0s7S6bne6mBY61Exxb4SETmV" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="添加" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\SchoolWorks\Compiler" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\SchoolWorks\Compiler\include" />
+      <recent name="D:\SchoolWorks\Compiler" />
+      <recent name="D:\SchoolWorks\Compiler\test\outfile" />
+      <recent name="D:\SchoolWorks\Compiler\test" />
+      <recent name="D:\SchoolWorks\Compiler\cmake-build-debug" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake 应用程序.Compiler">
+    <configuration name="Compiler" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Compiler" TARGET_NAME="Compiler" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="Compiler" RUN_TARGET_NAME="Compiler">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="main.cpp" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" nameIsGenerated="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Compiler" TARGET_NAME="main.cpp" CONFIG_NAME="main.cpp">
+      <option name="sourceFile" value="D:\SchoolWorks\Compiler\main.cpp" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake 应用程序.Compiler" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c813e839-b859-423c-930f-8ecad12d5189" name="Default Changelist" comment="" />
+      <created>1694508490961</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1694508490961</updated>
+      <workItem from="1694508494597" duration="817000" />
+      <workItem from="1694509327722" duration="225000" />
+      <workItem from="1694509565308" duration="205000" />
+      <workItem from="1694509786845" duration="329000" />
+      <workItem from="1694510135174" duration="38000" />
+      <workItem from="1694510374442" duration="3350000" />
+      <workItem from="1694532558484" duration="212000" />
+      <workItem from="1694598535353" duration="608000" />
+      <workItem from="1694662822397" duration="136000" />
+      <workItem from="1694662970771" duration="180000" />
+      <workItem from="1694663166270" duration="222000" />
+      <workItem from="1694677824889" duration="3431000" />
+      <workItem from="1694691730225" duration="3730000" />
+      <workItem from="1694752645511" duration="4510000" />
+      <workItem from="1694758536804" duration="2359000" />
+      <workItem from="1694851722477" duration="662000" />
+      <workItem from="1694936793244" duration="7108000" />
+      <workItem from="1694960371973" duration="1674000" />
+      <workItem from="1695025401901" duration="36000" />
+      <workItem from="1695026200841" duration="6203000" />
+      <workItem from="1695197544426" duration="1481000" />
+      <workItem from="1695199084289" duration="32000" />
+      <workItem from="1695199264757" duration="188000" />
+      <workItem from="1695199465073" duration="656000" />
+      <workItem from="1695200134278" duration="949000" />
+      <workItem from="1695264720515" duration="4090000" />
+      <workItem from="1695272391234" duration="3442000" />
+      <workItem from="1695295957904" duration="2483000" />
+      <workItem from="1695364564057" duration="12740000" />
+      <workItem from="1695520754147" duration="834000" />
+      <workItem from="1695553884001" duration="2481000" />
+      <workItem from="1695557990760" duration="2729000" />
+      <workItem from="1695561997740" duration="596000" />
+      <workItem from="1695621522691" duration="4686000" />
+      <workItem from="1695627229289" duration="8367000" />
+      <workItem from="1695637204316" duration="134000" />
+      <workItem from="1695637601588" duration="844000" />
+      <workItem from="1695643631884" duration="1452000" />
+      <workItem from="1695645194864" duration="764000" />
+      <workItem from="1695646317512" duration="599000" />
+      <workItem from="1695723752414" duration="1114000" />
+      <workItem from="1695725239891" duration="504000" />
+      <workItem from="1695726329627" duration="478000" />
+      <workItem from="1695737221889" duration="981000" />
+      <workItem from="1695739203693" duration="61000" />
+      <workItem from="1695739276521" duration="10000" />
+      <workItem from="1695739359780" duration="87000" />
+      <workItem from="1695780341424" duration="795000" />
+      <workItem from="1695826307578" duration="88000" />
+      <workItem from="1695871846899" duration="912000" />
+      <workItem from="1695872788228" duration="1104000" />
+      <workItem from="1695874019296" duration="542000" />
+      <workItem from="1695880975937" duration="1429000" />
+      <workItem from="1696244816362" duration="709000" />
+      <workItem from="1696245563672" duration="2607000" />
+      <workItem from="1696354698518" duration="325000" />
+      <workItem from="1696489873445" duration="130000" />
+      <workItem from="1696490068281" duration="1410000" />
+      <workItem from="1696576946302" duration="59000" />
+      <workItem from="1696577014519" duration="76000" />
+      <workItem from="1696577096447" duration="106000" />
+      <workItem from="1696577208848" duration="272000" />
+      <workItem from="1696577488853" duration="67000" />
+      <workItem from="1696577593209" duration="6000" />
+      <workItem from="1696577682628" duration="372000" />
+      <workItem from="1696578141678" duration="15000" />
+      <workItem from="1696578191780" duration="404000" />
+      <workItem from="1696578603440" duration="461000" />
+      <workItem from="1696579561375" duration="4451000" />
+      <workItem from="1696584265416" duration="142000" />
+      <workItem from="1696587164847" duration="5938000" />
+      <workItem from="1696677717222" duration="3880000" />
+      <workItem from="1696757545337" duration="3545000" />
+      <workItem from="1696846563015" duration="596000" />
+      <workItem from="1696851915978" duration="681000" />
+      <workItem from="1696903428062" duration="4387000" />
+      <workItem from="1696923412130" duration="9365000" />
+      <workItem from="1696936156151" duration="23000" />
+      <workItem from="1696991829771" duration="1575000" />
+      <workItem from="1697013444390" duration="3483000" />
+      <workItem from="1697022221288" duration="6524000" />
+      <workItem from="1697079302714" duration="2157000" />
+      <workItem from="1697107704983" duration="748000" />
+      <workItem from="1697192449228" duration="11558000" />
+      <workItem from="1697207201616" duration="5648000" />
+      <workItem from="1697213478378" duration="263000" />
+      <workItem from="1697213819123" duration="98000" />
+      <workItem from="1697213926445" duration="70000" />
+      <workItem from="1697214163451" duration="311000" />
+      <workItem from="1697214719583" duration="267000" />
+      <workItem from="1697215130862" duration="97000" />
+      <workItem from="1697250573999" duration="173000" />
+    </task>
+    <task id="LOCAL-00001" summary="优化代码结构">
+      <created>1697250707617</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1697250707617</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="优化代码结构" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化代码结构" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="511" y="248" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1697214354643">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="511" y="248" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog/0.0.1536.824@0.0.1536.824" timestamp="1697214354643" />
+    <state x="366" y="0" key="CommitChangelistDialog2" timestamp="1697250727718">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="366" y="0" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1697250727718" />
+    <state width="1493" height="371" key="GridCell.Tab.0.bottom" timestamp="1697214988091">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="371" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1697214988091" />
+    <state width="1493" height="371" key="GridCell.Tab.0.center" timestamp="1697214988091">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="371" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1697214988091" />
+    <state width="1493" height="371" key="GridCell.Tab.0.left" timestamp="1697214988091">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="371" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1697214988091" />
+    <state width="1493" height="371" key="GridCell.Tab.0.right" timestamp="1697214988091">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="371" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1697214988091" />
+    <state width="1493" height="193" key="GridCell.Tab.1.bottom" timestamp="1697212988593">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="193" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1697212988593" />
+    <state width="1493" height="193" key="GridCell.Tab.1.center" timestamp="1697212988593">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="193" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1697212988593" />
+    <state width="1493" height="193" key="GridCell.Tab.1.left" timestamp="1697212988593">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="193" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1697212988593" />
+    <state width="1493" height="193" key="GridCell.Tab.1.right" timestamp="1697212988593">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="193" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1697212988593" />
+    <state x="270" y="54" key="SettingsEditor" timestamp="1696580841543">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="270" y="54" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1696580841543" />
+    <state x="449" y="236" key="com.intellij.ide.util.TipDialog" timestamp="1697250583650">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="449" y="236" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1697250583650" />
+    <state x="510" y="54" key="refactoring.ChangeSignatureDialog" timestamp="1697211574351">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="510" y="54" key="refactoring.ChangeSignatureDialog/0.0.1536.824@0.0.1536.824" timestamp="1697211574351" />
+    <state x="809" y="190" key="run.anything.popup" timestamp="1697197194067">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="809" y="190" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1697197194067" />
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup" timestamp="1696933706000">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="431" y="145" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1696933706000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint enabled="true" type="python-exception">
+          <dependency id="0" />
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
